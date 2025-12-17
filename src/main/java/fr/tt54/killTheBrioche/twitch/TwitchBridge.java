@@ -65,6 +65,8 @@ public class TwitchBridge {
     }
 
     public void connect(){
+        OAuthCallbackServer.stopServer();
+
         OAuth2Credential credential = new OAuth2Credential("twitch", token.access_token());
         this.twitchClient = TwitchClientBuilder.builder()
                 .withEnableHelix(true)
@@ -76,7 +78,7 @@ public class TwitchBridge {
             IEventSubConduit conduit = TwitchConduitSocketPool.create(spec -> {
                 spec.clientId(this.clientId);
                 spec.clientSecret(this.clientSecret);
-                spec.poolShards(4); // customizable pool size
+                spec.poolShards(4);
             });
             conduit.register(SubscriptionTypes.CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD, b -> b.broadcasterUserId(currentUser.getId()).build());
             conduit.getEventManager().onEvent(ChannelPointsCustomRewardRedemptionEvent.class, event -> {

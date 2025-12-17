@@ -7,7 +7,9 @@ import java.net.InetSocketAddress;
 
 public class OAuthCallbackServer {
 
-    public void launchServer(){
+    private static HttpServer server;
+
+    public static void launchServer(){
         new Thread(() -> {
             try {
                 runCallbackServer();
@@ -17,9 +19,15 @@ public class OAuthCallbackServer {
         }).start();
     }
 
-    private void runCallbackServer() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+    public static void stopServer(){
+        if(server != null){
+            server.stop(1);
+            server = null;
+        }
+    }
 
+    private static void runCallbackServer() throws IOException {
+        server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/callback", exchange -> {
             String query = exchange.getRequestURI().getQuery();
             System.out.println("Callback reçu : " + query);
