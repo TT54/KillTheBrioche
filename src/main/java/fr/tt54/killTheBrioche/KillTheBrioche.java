@@ -1,17 +1,29 @@
 package fr.tt54.killTheBrioche;
 
+import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
+import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class KillTheBrioche extends JavaPlugin {
 
+    private static KillTheBrioche instance;
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        instance = this;
 
+        this.saveDefaultConfig();
+
+        TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
+        OAuthCallbackServer.launchServer();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        OAuthCallbackServer.stopServer();
+    }
+
+    public static KillTheBrioche getInstance() {
+        return instance;
     }
 }
