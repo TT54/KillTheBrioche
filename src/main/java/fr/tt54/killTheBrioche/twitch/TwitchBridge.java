@@ -94,13 +94,17 @@ public class TwitchBridge {
         }
     }
 
-    public void askConnection() throws IOException, URISyntaxException {
-        URI uri = new URI("https://id.twitch.tv/oauth2/authorize" +
+    public String getConnectionUrlString(){
+        return "https://id.twitch.tv/oauth2/authorize" +
                 "?response_type=code" +
                 "&client_id=" + this.clientId +
                 "&redirect_uri=http://localhost:8080/callback" +
                 "&scope=channel:read:redemptions" +
-                "&state=RANDOM_STRING");
+                "&state=RANDOM_STRING";
+    }
+
+    public void askConnection() throws IOException, URISyntaxException {
+        URI uri = new URI(this.getConnectionUrlString());
         Desktop.getDesktop().browse(uri);
     }
 
@@ -118,5 +122,9 @@ public class TwitchBridge {
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    public boolean isUserConnected() {
+        return this.token != null;
     }
 }
