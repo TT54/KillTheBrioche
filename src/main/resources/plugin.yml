@@ -1,0 +1,4 @@
+name: KillTheBrioche
+version: '1.0-SNAPSHOT'
+main: fr.tt54.killTheBrioche.KillTheBrioche
+api-version: '1.21'
