@@ -9,14 +9,18 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public final class KillTheBrioche extends JavaPlugin {
+
+    public static Logger logger;
 
     private static KillTheBrioche instance;
 
     @Override
     public void onEnable() {
         instance = this;
+        logger = this.getLogger();
 
         this.saveDefaultConfig();
 

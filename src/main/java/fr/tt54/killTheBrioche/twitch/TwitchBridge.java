@@ -13,6 +13,7 @@ import com.github.twitch4j.helix.domain.CustomRewardList;
 import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import com.google.gson.Gson;
+import fr.tt54.killTheBrioche.KillTheBrioche;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -29,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class TwitchBridge {
 
@@ -54,6 +56,7 @@ public class TwitchBridge {
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public TwitchBridge onRewardRedemption(Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer){
         this.redemptionEventConsumer = redemptionEventConsumer;
         return this;
@@ -100,7 +103,7 @@ public class TwitchBridge {
             });
         } catch (CreateConduitException | ConduitNotFoundException | ConduitResizeException | ShardTimeoutException |
                  ShardRegistrationException e) {
-            e.printStackTrace();
+            KillTheBrioche.logger.log(Level.SEVERE, "Impossible d'écouter l'achat de récompenses via les points de chaîne", e);
         }
 
         if(this.connectionConsumer != null) this.connectionConsumer.accept(this);
@@ -131,7 +134,7 @@ public class TwitchBridge {
             CustomRewardList rewards = this.twitchClient.getHelix().getCustomRewards(this.token.access_token(), this.currentUser.getId(), null, onlyManageable).execute();
             return rewards.getRewards();
         } catch (Exception e){
-            e.printStackTrace();
+            KillTheBrioche.logger.log(Level.SEVERE, "Impossible de récupérer la liste des récompenses", e);
         }
         return new ArrayList<>();
     }
