@@ -27,7 +27,7 @@ public class SpawnMobReward extends MCReward {
             Location location = target.getLocation().clone().add(dx, -radius, dz);
             for(int j = -radius; j < radius + 1; j++){
                 if(location.getBlock().isSolid() && !location.clone().add(0, 1, 0).getBlock().isSolid()){
-                    location.getWorld().spawnEntity(location, this.type);
+                    location.getWorld().spawnEntity(location.add(0, 1, 0), this.type);
                     return;
                 }
                 location.add(0, 1, 0);
