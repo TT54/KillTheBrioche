@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TwitchBridge {
 
@@ -40,9 +41,22 @@ public class TwitchBridge {
     private TwitchClient twitchClient;
     private User currentUser;
 
+    private Consumer<TwitchBridge> connectionConsumer;
+    private Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer;
+
     public TwitchBridge(String clientId, String clientSecret) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+    }
+
+    public TwitchBridge onConnection(Consumer<TwitchBridge> connectionConsumer){
+        this.connectionConsumer = connectionConsumer;
+        return this;
+    }
+
+    public TwitchBridge onRewardRedemption(Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer){
+        this.redemptionEventConsumer = redemptionEventConsumer;
+        return this;
     }
 
     public void retrieveTwitchToken(String code) throws IOException {
@@ -82,16 +96,14 @@ public class TwitchBridge {
             });
             conduit.register(SubscriptionTypes.CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD, b -> b.broadcasterUserId(currentUser.getId()).build());
             conduit.getEventManager().onEvent(ChannelPointsCustomRewardRedemptionEvent.class, event -> {
-                System.out.println("Récompense utilisée !");
-                System.out.println("Utilisateur : " + event.getUserName());
-                System.out.println("Récompense : " + event.getReward().getTitle());
-                System.out.println("Id de la récompense : " + event.getReward().getId());
-                System.out.println("Coût : " + event.getReward().getCost());
+                if(this.redemptionEventConsumer != null) this.redemptionEventConsumer.accept(event);
             });
         } catch (CreateConduitException | ConduitNotFoundException | ConduitResizeException | ShardTimeoutException |
                  ShardRegistrationException e) {
             e.printStackTrace();
         }
+
+        if(this.connectionConsumer != null) this.connectionConsumer.accept(this);
     }
 
     public String getConnectionUrlString(){
@@ -114,9 +126,9 @@ public class TwitchBridge {
         return resultList.getUsers().getFirst();
     }
 
-    public List<CustomReward> getCustomRewards(TwitchClient twitchClient){
+    public List<CustomReward> getCustomRewards(boolean onlyManageable){
         try {
-            CustomRewardList rewards = twitchClient.getHelix().getCustomRewards(this.token.access_token(), this.currentUser.getId(), null, false).execute();
+            CustomRewardList rewards = this.twitchClient.getHelix().getCustomRewards(this.token.access_token(), this.currentUser.getId(), null, onlyManageable).execute();
             return rewards.getRewards();
         } catch (Exception e){
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package fr.tt54.killTheBrioche;
 
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
+import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +17,10 @@ public final class KillTheBrioche extends JavaPlugin {
         this.saveDefaultConfig();
 
         TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
+        TwitchBridge.instance.onConnection(RewardsConfig::loadTwitchRewards).onRewardRedemption(RewardsConfig::onTwitchRewardRedeemed);
         OAuthCallbackServer.launchServer();
+
+        RewardsConfig.load();
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }
@@ -24,6 +28,7 @@ public final class KillTheBrioche extends JavaPlugin {
     @Override
     public void onDisable() {
         OAuthCallbackServer.stopServer();
+        RewardsConfig.save();
     }
 
     public static KillTheBrioche getInstance() {
