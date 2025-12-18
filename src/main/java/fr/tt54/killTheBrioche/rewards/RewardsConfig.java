@@ -34,6 +34,7 @@ public class RewardsConfig {
     public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5));
     public static final MCReward effectHunger = registerMCReward(new EffectReward(PotionEffectType.HUNGER, 1, 10, Material.ROTTEN_FLESH));
     public static final MCReward effectRegen = registerMCReward(new EffectReward(PotionEffectType.REGENERATION, 0, 5, Material.GOLDEN_APPLE));
+    public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL));
 
     public static void load() {
         rewardsLink.clear();
