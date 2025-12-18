@@ -33,5 +33,9 @@ public abstract class MCReward {
         return message;
     }
 
+    public Material getDisplay() {
+        return display;
+    }
+
     public abstract void execute(Player target);
 }

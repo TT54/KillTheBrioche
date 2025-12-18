@@ -1,10 +1,14 @@
 package fr.tt54.killTheBrioche;
 
+import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public final class KillTheBrioche extends JavaPlugin {
 
@@ -21,6 +25,10 @@ public final class KillTheBrioche extends JavaPlugin {
         OAuthCallbackServer.launchServer();
 
         RewardsConfig.load();
+
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(CmdKillTheBrioche.ktbCommand, List.of("killthebrioche", "ktb"));
+        });
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }

@@ -7,19 +7,18 @@ import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import fr.tt54.killTheBrioche.utils.FileManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class RewardsConfig {
-
-    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5));
-    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5));
-    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5));
 
     private static Map<String, String> rewardsLink = new HashMap<>();
     private static final Map<String, CustomReward> twitchRewardsId = new HashMap<>();
@@ -27,6 +26,10 @@ public class RewardsConfig {
 
     private static final Type rewardsLinkType = new TypeToken<Map<String, String>>() {}.getType();
     private static final Gson gson = new Gson();
+
+    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5));
+    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5));
+    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5));
 
     public static void load() {
         rewardsLink.clear();
@@ -57,12 +60,16 @@ public class RewardsConfig {
         if(rewardsLink.containsKey(id)){
             MCReward mcReward = mcRewards.get(rewardsLink.get(id));
             if(mcReward != null){
-                Bukkit.getOnlinePlayers().forEach(mcReward::execute);
-                Bukkit.broadcastMessage(mcReward.getMessage());
+                executeReward(mcReward);
             } else {
                 System.err.println("La reward MC associée à " + id + " n'a pas été trouvée");
             }
         }
+    }
+
+    public static void executeReward(MCReward mcReward){
+        Bukkit.getOnlinePlayers().forEach(mcReward::execute);
+        Bukkit.broadcast(Component.text(mcReward.getMessage()));
     }
 
     private static MCReward registerMCReward(MCReward reward){
@@ -70,4 +77,26 @@ public class RewardsConfig {
         return reward;
     }
 
+    public static CustomReward getTwitchReward(MCReward reward) {
+        for(Map.Entry<String, String> entry : rewardsLink.entrySet()){
+            if(entry.getValue().equalsIgnoreCase(reward.getId())) return twitchRewardsId.get(entry.getKey());
+        }
+        return null;
+    }
+
+    public static List<CustomReward> getTwitchRewards(){
+        return twitchRewardsId.values().stream().toList();
+    }
+
+    public static void linkRedeem(CustomReward twitchReward, MCReward mcReward) {
+        rewardsLink.put(twitchReward.getId(), mcReward.getId());
+    }
+
+    public static Set<String> getMCRewardIds() {
+        return mcRewards.keySet();
+    }
+
+    public static MCReward getMcReward(String rewardID) {
+        return mcRewards.get(rewardID);
+    }
 }
