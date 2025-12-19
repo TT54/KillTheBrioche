@@ -78,8 +78,10 @@ public class RewardsConfig {
     }
 
     public static void executeReward(MCReward mcReward){
-        Bukkit.getOnlinePlayers().forEach(mcReward::execute);
-        Bukkit.broadcast(Component.text(mcReward.getMessage()));
+        Bukkit.getScheduler().runTask(KillTheBrioche.getInstance(), () -> {
+            Bukkit.getOnlinePlayers().forEach(mcReward::execute);
+            Bukkit.broadcast(Component.text(mcReward.getMessage()));
+        });
     }
 
     private static MCReward registerMCReward(MCReward reward){
