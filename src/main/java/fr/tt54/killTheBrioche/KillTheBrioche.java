@@ -1,17 +1,17 @@
 package fr.tt54.killTheBrioche;
 
-import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
-import fr.tt54.killTheBrioche.twitch.TwitchToken;
-import fr.tt54.killTheBrioche.utils.FileManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
@@ -41,6 +41,19 @@ public final class KillTheBrioche extends JavaPlugin {
         });
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                try {
+                    Bukkit.broadcast(Component.text("Reconnexion à l'API Twitch", NamedTextColor.GRAY));
+                    TwitchBridge.instance.refreshToken();
+                    System.out.println("Token refreshed");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }.runTaskTimer(this, 20 * 60, 20 * 60);
     }
 
     @Override

@@ -42,12 +42,14 @@ public class TwitchBridge {
     public static TwitchBridge instance;
 
     public TwitchToken token;
+    private long lastTokenRefresh = 0;
     private final String clientId;
     private final String clientSecret;
 
     private TwitchClient twitchClient;
     private User currentUser;
 
+    private IEventSubConduit conduit;
     private Consumer<TwitchBridge> connectionConsumer;
     private Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer;
 
@@ -85,6 +87,8 @@ public class TwitchBridge {
         System.out.println(body);
         token = new Gson().fromJson(body, TwitchToken.class);
         saveTwitchToken();
+
+        this.lastTokenRefresh = System.currentTimeMillis() / 1000;
 
         connect();
     }
@@ -130,6 +134,9 @@ public class TwitchBridge {
         String body = EntityUtils.toString(response.getEntity());
         System.out.println(body);
         token = new Gson().fromJson(body, TwitchToken.class);
+        this.saveTwitchToken();
+
+        this.lastTokenRefresh = System.currentTimeMillis() / 1000;
 
         connect();
     }
@@ -145,7 +152,8 @@ public class TwitchBridge {
         this.currentUser = getCurrentUser(twitchClient);
 
         try {
-            IEventSubConduit conduit = TwitchConduitSocketPool.create(spec -> {
+            if(conduit != null) conduit.close();
+            conduit = TwitchConduitSocketPool.create(spec -> {
                 spec.clientId(this.clientId);
                 spec.clientSecret(this.clientSecret);
                 spec.poolShards(4);
@@ -154,8 +162,7 @@ public class TwitchBridge {
             conduit.getEventManager().onEvent(ChannelPointsCustomRewardRedemptionEvent.class, event -> {
                 if(this.redemptionEventConsumer != null) this.redemptionEventConsumer.accept(event);
             });
-        } catch (CreateConduitException | ConduitNotFoundException | ConduitResizeException | ShardTimeoutException |
-                 ShardRegistrationException e) {
+        } catch (Exception e) {
             KillTheBrioche.logger.log(Level.SEVERE, "Impossible d'écouter l'achat de récompenses via les points de chaîne", e);
             Bukkit.broadcast(Component.text("Impossible d'écouter l'achat de récompense via les points de chaîne", NamedTextColor.RED));
         }
