@@ -6,8 +6,12 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.tt54.killTheBrioche.inventories.config.MCRewardsInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
+import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,6 +49,23 @@ public class CmdKillTheBrioche {
                                 return Command.SINGLE_SUCCESS;
                             })
                     )
+            ).then(Commands.literal("refresh")
+                    .executes(ctx -> {
+                        final CommandSender sender = ctx.getSource().getSender();
+                        if(TwitchBridge.instance.isUserConnected()){
+                            RewardsConfig.loadTwitchRewards(TwitchBridge.instance);
+                        } else {
+                            sender.sendMessage("§cAucune chaine twitch connectée");
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
+            ).then(Commands.literal("connect")
+                    .executes(ctx -> {
+                        final CommandSender sender = ctx.getSource().getSender();
+                        sender.sendMessage(Component.text(" Cliquez pour vous connecter à Twitch", NamedTextColor.GREEN)
+                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, ClickEvent.Payload.string(TwitchBridge.instance.getConnectionUrlString()))));
+                        return Command.SINGLE_SUCCESS;
+                    })
             )
             .build();
 
