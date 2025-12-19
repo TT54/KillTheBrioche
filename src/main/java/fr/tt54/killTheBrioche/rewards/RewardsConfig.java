@@ -38,6 +38,7 @@ public class RewardsConfig {
     public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER));
     public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE));
     public static final MCReward locateVillage = registerMCReward(new VillageLocateReward(Material.EMERALD));
+    public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF));
 
     public static void load() {
         rewardsLink.clear();
