@@ -5,7 +5,6 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
 import com.github.twitch4j.eventsub.Conduit;
-import com.github.twitch4j.eventsub.EventSubSubscription;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.eventsub.socket.IEventSubConduit;
 import com.github.twitch4j.eventsub.socket.conduit.TwitchConduitSocketPool;
@@ -93,13 +92,6 @@ public class TwitchBridge {
     private void removePreviousConduits(){
         TwitchIdentityProvider identityProvider = new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
         OAuth2Credential appToken = identityProvider.getAppAccessToken();
-
-        EventSubSubscriptionList subs = twitchClient.getHelix().getEventSubSubscriptions(appToken.getAccessToken(), null, null, null).execute();
-        System.out.println("Subscriptions trouvées : " + subs.getTotal());
-        for (EventSubSubscription sub : subs.getSubscriptions()) {
-            twitchClient.getHelix().deleteEventSubSubscription(appToken.getAccessToken(), sub.getId()).execute();
-        }
-        System.out.println("Les subscriptions ont été supprimées.");
 
         ConduitList conduits = twitchClient.getHelix().getConduits(appToken.getAccessToken()).execute();
         System.out.println("Conduits trouvés : " + conduits.getConduits().size());
