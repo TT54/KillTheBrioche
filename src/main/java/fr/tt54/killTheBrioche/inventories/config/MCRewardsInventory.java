@@ -5,7 +5,6 @@ import fr.tt54.killTheBrioche.inventories.CorePersonalInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.utils.ItemBuilder;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -41,7 +40,7 @@ public class MCRewardsInventory extends CorePersonalInventory {
         this.setRewardSlot(inv, RewardsConfig.effectRegen, 9 * 4 + 2);
         this.setRewardSlot(inv, RewardsConfig.locateVillage, 9 * 4 + 3);
         this.setRewardSlot(inv, RewardsConfig.randomFood, 9 * 4 + 5);
-        this.setRewardSlot(inv, RewardsConfig.stuff, 9 * 4 + 6);
+        this.setRewardSlot(inv, RewardsConfig.randomStuff, 9 * 4 + 6);
 
         return inv;
     }

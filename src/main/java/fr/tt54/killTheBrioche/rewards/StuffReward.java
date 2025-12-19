@@ -19,7 +19,7 @@ public class StuffReward extends MCReward{
             Material.NETHERITE_LEGGINGS, Material.NETHERITE_BOOTS);
 
     public StuffReward(Material display) {
-        super("random_food", "Nourriture aléatoire", "§eVous avez reçu de la nourriture", display);
+        super("random_stuff", "Nourriture aléatoire", "§eVous avez reçu de la nourriture", display);
     }
 
     @Override
