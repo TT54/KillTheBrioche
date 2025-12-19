@@ -1,13 +1,18 @@
 package fr.tt54.killTheBrioche;
 
+import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
+import fr.tt54.killTheBrioche.twitch.TwitchToken;
+import fr.tt54.killTheBrioche.utils.FileManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,6 +32,7 @@ public final class KillTheBrioche extends JavaPlugin {
         TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
         TwitchBridge.instance.onConnection(RewardsConfig::loadTwitchRewards).onRewardRedemption(RewardsConfig::onTwitchRewardRedeemed);
         OAuthCallbackServer.launchServer();
+        TwitchBridge.instance.loadTwitchToken();
 
         RewardsConfig.load();
 

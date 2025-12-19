@@ -14,6 +14,9 @@ import com.github.twitch4j.helix.domain.User;
 import com.github.twitch4j.helix.domain.UserList;
 import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.KillTheBrioche;
+import fr.tt54.killTheBrioche.utils.FileManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -22,8 +25,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.bukkit.Bukkit;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -63,6 +68,8 @@ public class TwitchBridge {
     }
 
     public void retrieveTwitchToken(String code) throws IOException {
+        Bukkit.broadcast(Component.text("Connexion à l'API Twitch en cours...", NamedTextColor.GRAY));
+
         final HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost("https://id.twitch.tv/oauth2/token");
         final List<NameValuePair> params = new ArrayList<>();
@@ -71,6 +78,52 @@ public class TwitchBridge {
         params.add(new BasicNameValuePair("code", code));
         params.add(new BasicNameValuePair("grant_type", "authorization_code"));
         params.add(new BasicNameValuePair("redirect_uri", "http://localhost:8080/callback"));
+        request.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpResponse response = httpClient.execute(request);
+        String body = EntityUtils.toString(response.getEntity());
+        System.out.println(body);
+        token = new Gson().fromJson(body, TwitchToken.class);
+        saveTwitchToken();
+
+        connect();
+    }
+
+    public void loadTwitchToken(){
+        Gson gson = new Gson();
+        File tokenFile = FileManager.getFileWithoutCreating("token.json", KillTheBrioche.getInstance());
+        if (tokenFile.exists()) {
+            this.token = gson.fromJson(FileManager.read(tokenFile), TwitchToken.class);
+            try {
+                this.refreshToken();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void saveTwitchToken() throws IOException {
+        if(TwitchBridge.instance.token != null) {
+            System.out.println("Saving Twitch token");
+            Gson gson = new Gson();
+            File tokenFile = FileManager.getFile("token.json", KillTheBrioche.getInstance());
+            if(!tokenFile.exists()) {
+                System.out.println("Should create a file");
+                System.out.println("Creation succeed: " + tokenFile.createNewFile());
+            }
+            FileManager.write(gson.toJson(this.token), tokenFile);
+            System.out.println("Twitch token saved");
+        }
+    }
+
+    public void refreshToken() throws IOException {
+        final HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost request = new HttpPost("https://id.twitch.tv/oauth2/token");
+        final List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("client_id", this.clientId));
+        params.add(new BasicNameValuePair("client_secret", this.clientSecret));
+        params.add(new BasicNameValuePair("grant_type", "refresh_token"));
+        params.add(new BasicNameValuePair("refresh_token", this.token.refresh_token()));
         request.setEntity(new UrlEncodedFormEntity(params));
 
         HttpResponse response = httpClient.execute(request);
@@ -104,9 +157,11 @@ public class TwitchBridge {
         } catch (CreateConduitException | ConduitNotFoundException | ConduitResizeException | ShardTimeoutException |
                  ShardRegistrationException e) {
             KillTheBrioche.logger.log(Level.SEVERE, "Impossible d'écouter l'achat de récompenses via les points de chaîne", e);
+            Bukkit.broadcast(Component.text("Impossible d'écouter l'achat de récompense via les points de chaîne", NamedTextColor.RED));
         }
 
         if(this.connectionConsumer != null) this.connectionConsumer.accept(this);
+        Bukkit.broadcast(Component.text("Connecté à l'API Twitch !", NamedTextColor.GREEN));
     }
 
     public String getConnectionUrlString(){
