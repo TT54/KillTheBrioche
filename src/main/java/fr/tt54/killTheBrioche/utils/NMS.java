@@ -40,15 +40,12 @@ public class NMS {
                 level.getChunkSource().getGenerator().findNearestMapStructure(level, holderOpt.get(), origin, 100, false);
 
         if (pair == null) {
-            player.sendMessage("§cAucune Ancient City trouvée à proximité !");
+            player.sendMessage("§cAucune structure trouvée à proximité !");
             return null;
         }
 
         BlockPos found = pair.getFirst();
-        Location loc = new Location(player.getWorld(), found.getX(), found.getY(), found.getZ());
-
-        player.sendMessage("§aAncient City trouvée en " + found.getX() + ", " + found.getY() + ", " + found.getZ());
-        return loc;
+        return new Location(player.getWorld(), found.getX(), found.getY(), found.getZ());
     }
 }
 
