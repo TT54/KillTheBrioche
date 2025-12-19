@@ -42,7 +42,7 @@ public class TwitchBridge {
     public static TwitchBridge instance;
 
     public TwitchToken token;
-    private long lastTokenRefresh = 0;
+    public long lastTokenRefresh = 0;
     private final String clientId;
     private final String clientSecret;
 
