@@ -32,15 +32,16 @@ public class MCRewardsInventory extends CorePersonalInventory {
         this.setRewardSlot(inv, RewardsConfig.spawnSkeleton, 9 + 4);
         this.setRewardSlot(inv, RewardsConfig.spawnCreeper, 9 + 5);
 
-        this.setRewardSlot(inv, RewardsConfig.effectRegen, 9 * 2 + 3);
-        this.setRewardSlot(inv, RewardsConfig.effectHunger, 9 * 2 + 5);
+        this.setRewardSlot(inv, RewardsConfig.effectHunger, 9 * 2 + 4);
 
         this.setRewardSlot(inv, RewardsConfig.rtp2500, 9 * 3 + 3);
         this.setRewardSlot(inv, RewardsConfig.tpAncientCity, 9 * 3 + 4);
         this.setRewardSlot(inv, RewardsConfig.breakBlocks, 9 * 3 + 5);
 
+        this.setRewardSlot(inv, RewardsConfig.effectRegen, 9 * 4 + 2);
         this.setRewardSlot(inv, RewardsConfig.locateVillage, 9 * 4 + 3);
-        this.setRewardSlot(inv, RewardsConfig.randomFood, 9 * 4 + 4);
+        this.setRewardSlot(inv, RewardsConfig.randomFood, 9 * 4 + 5);
+        this.setRewardSlot(inv, RewardsConfig.stuff, 9 * 4 + 6);
 
         return inv;
     }

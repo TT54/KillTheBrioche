@@ -39,6 +39,7 @@ public class RewardsConfig {
     public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE));
     public static final MCReward locateVillage = registerMCReward(new VillageLocateReward(Material.EMERALD));
     public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF));
+    public static final MCReward stuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE));
 
     public static void load() {
         rewardsLink.clear();
