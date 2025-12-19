@@ -1,5 +1,7 @@
 package fr.tt54.killTheBrioche;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 public final class KillTheBrioche extends JavaPlugin {
 
     public static Logger logger;
+    public static Gson gson = new GsonBuilder().create();
 
     private static KillTheBrioche instance;
 

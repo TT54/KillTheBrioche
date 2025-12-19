@@ -9,10 +9,8 @@ import com.github.twitch4j.eventsub.EventSubSubscription;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.eventsub.socket.IEventSubConduit;
 import com.github.twitch4j.eventsub.socket.conduit.TwitchConduitSocketPool;
-import com.github.twitch4j.eventsub.socket.conduit.exceptions.*;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.*;
-import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.utils.FileManager;
 import net.kyori.adventure.text.Component;
@@ -27,11 +25,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.bukkit.Bukkit;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -52,6 +47,7 @@ public class TwitchBridge {
     private IEventSubConduit conduit;
     private Consumer<TwitchBridge> connectionConsumer;
     private Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer;
+    private final HttpClient httpClient = HttpClientBuilder.create().build();
 
     public TwitchBridge(String clientId, String clientSecret) {
         this.clientId = clientId;
@@ -72,80 +68,51 @@ public class TwitchBridge {
     public void retrieveTwitchToken(String code) throws IOException {
         Bukkit.broadcast(Component.text("Connexion à l'API Twitch en cours...", NamedTextColor.GRAY));
 
-        final HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost("https://id.twitch.tv/oauth2/token");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("client_id", this.clientId));
-        params.add(new BasicNameValuePair("client_secret", this.clientSecret));
-        params.add(new BasicNameValuePair("code", code));
-        params.add(new BasicNameValuePair("grant_type", "authorization_code"));
-        params.add(new BasicNameValuePair("redirect_uri", "http://localhost:8080/callback"));
+        final List<NameValuePair> params = List.of(
+                new BasicNameValuePair("client_id", this.clientId),
+                new BasicNameValuePair("client_secret", this.clientSecret),
+                new BasicNameValuePair("code", code),
+                new BasicNameValuePair("grant_type", "authorization_code"),
+                new BasicNameValuePair("redirect_uri", "http://localhost:8080/callback")
+        );
         request.setEntity(new UrlEncodedFormEntity(params));
 
         HttpResponse response = httpClient.execute(request);
         String body = EntityUtils.toString(response.getEntity());
         System.out.println(body);
-        token = new Gson().fromJson(body, TwitchToken.class);
+        token = KillTheBrioche.gson.fromJson(body, TwitchToken.class);
         saveTwitchToken();
 
         this.lastTokenRefresh = System.currentTimeMillis() / 1000;
 
-        TwitchIdentityProvider identityProvider =
-                new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
-
-        OAuth2Credential appToken =
-                identityProvider.getAppAccessToken();
-
-        EventSubSubscriptionList subs =
-                twitchClient.getHelix()
-                        .getEventSubSubscriptions(
-                                appToken.getAccessToken(),
-                                null,
-                                null,
-                                null
-                        )
-                        .execute();
-
-        System.out.println("Subscriptions trouvées : " + subs.getTotal());
-
-        // 4️⃣ Supprimer chaque subscription
-        for (EventSubSubscription sub : subs.getSubscriptions()) {
-            System.out.println("Suppression: " + sub.getId());
-
-            twitchClient.getHelix()
-                    .deleteEventSubSubscription(
-                            appToken.getAccessToken(),
-                            sub.getId()
-                    )
-                    .execute();
-        }
-
-        System.out.println("✅ Toutes les subscriptions ont été supprimées.");
-
-        ConduitList conduits = twitchClient.getHelix()
-                .getConduits(appToken.getAccessToken())
-                .execute();
-
-        System.out.println("Conduits trouvés: " + conduits.getConduits().size());
-        for (Conduit conduit : conduits.getConduits()) {
-            System.out.println("Suppression conduit: " + conduit.getId());
-
-            twitchClient.getHelix()
-                    .deleteConduit(
-                            appToken.getAccessToken(),
-                            conduit.getId()
-                    )
-                    .execute();
-        }
-
+        this.removePreviousConduits();
         connect();
     }
 
+    private void removePreviousConduits(){
+        TwitchIdentityProvider identityProvider = new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
+        OAuth2Credential appToken = identityProvider.getAppAccessToken();
+
+        EventSubSubscriptionList subs = twitchClient.getHelix().getEventSubSubscriptions(appToken.getAccessToken(), null, null, null).execute();
+        System.out.println("Subscriptions trouvées : " + subs.getTotal());
+        for (EventSubSubscription sub : subs.getSubscriptions()) {
+            twitchClient.getHelix().deleteEventSubSubscription(appToken.getAccessToken(), sub.getId()).execute();
+        }
+        System.out.println("Les subscriptions ont été supprimées.");
+
+        ConduitList conduits = twitchClient.getHelix().getConduits(appToken.getAccessToken()).execute();
+        System.out.println("Conduits trouvés : " + conduits.getConduits().size());
+        for (Conduit conduit : conduits.getConduits()) {
+            twitchClient.getHelix().deleteConduit(appToken.getAccessToken(), conduit.getId()).execute();
+        }
+        System.out.println("Les conduits ont été supprimés");
+    }
+
     public void loadTwitchToken(){
-        Gson gson = new Gson();
         File tokenFile = FileManager.getFileWithoutCreating("token.json", KillTheBrioche.getInstance());
         if (tokenFile.exists()) {
-            this.token = gson.fromJson(FileManager.read(tokenFile), TwitchToken.class);
+            this.token = KillTheBrioche.gson.fromJson(FileManager.read(tokenFile), TwitchToken.class);
             try {
                 this.refreshToken();
             } catch (IOException e) {
@@ -154,34 +121,33 @@ public class TwitchBridge {
         }
     }
 
-    public void saveTwitchToken() throws IOException {
+    private void saveTwitchToken() throws IOException {
         if(TwitchBridge.instance.token != null) {
             System.out.println("Saving Twitch token");
-            Gson gson = new Gson();
             File tokenFile = FileManager.getFile("token.json", KillTheBrioche.getInstance());
             if(!tokenFile.exists()) {
                 System.out.println("Should create a file");
                 System.out.println("Creation succeed: " + tokenFile.createNewFile());
             }
-            FileManager.write(gson.toJson(this.token), tokenFile);
+            FileManager.write(KillTheBrioche.gson.toJson(this.token), tokenFile);
             System.out.println("Twitch token saved");
         }
     }
 
     public void refreshToken() throws IOException {
-        final HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost("https://id.twitch.tv/oauth2/token");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("client_id", this.clientId));
-        params.add(new BasicNameValuePair("client_secret", this.clientSecret));
-        params.add(new BasicNameValuePair("grant_type", "refresh_token"));
-        params.add(new BasicNameValuePair("refresh_token", this.token.refresh_token()));
+        final List<NameValuePair> params = List.of(
+                new BasicNameValuePair("client_id", this.clientId),
+                new BasicNameValuePair("client_secret", this.clientSecret),
+                new BasicNameValuePair("grant_type", "refresh_token"),
+                new BasicNameValuePair("refresh_token", this.token.refresh_token())
+        );
         request.setEntity(new UrlEncodedFormEntity(params));
 
         HttpResponse response = httpClient.execute(request);
         String body = EntityUtils.toString(response.getEntity());
         System.out.println(body);
-        token = new Gson().fromJson(body, TwitchToken.class);
+        token = KillTheBrioche.gson.fromJson(body, TwitchToken.class);
         this.saveTwitchToken();
 
         this.lastTokenRefresh = System.currentTimeMillis() / 1000;
@@ -189,7 +155,7 @@ public class TwitchBridge {
         connect();
     }
 
-    public void connect(){
+    private void connect(){
         OAuthCallbackServer.stopServer();
 
         OAuth2Credential credential = new OAuth2Credential("twitch", token.access_token());
@@ -228,11 +194,6 @@ public class TwitchBridge {
                 "&redirect_uri=http://localhost:8080/callback" +
                 "&scope=channel:read:redemptions" +
                 "&state=RANDOM_STRING";
-    }
-
-    public void askConnection() throws IOException, URISyntaxException {
-        URI uri = new URI(this.getConnectionUrlString());
-        Desktop.getDesktop().browse(uri);
     }
 
     public User getCurrentUser(TwitchClient twitchClient){

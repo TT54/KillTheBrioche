@@ -3,7 +3,6 @@ package fr.tt54.killTheBrioche.rewards;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.helix.domain.CustomReward;
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import fr.tt54.killTheBrioche.utils.FileManager;
@@ -27,7 +26,6 @@ public class RewardsConfig {
     private static final Map<String, MCReward> mcRewards = new HashMap<>();
 
     private static final Type rewardsLinkType = new TypeToken<Map<String, String>>() {}.getType();
-    private static final Gson gson = new Gson();
 
     public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5));
     public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5));
@@ -50,12 +48,12 @@ public class RewardsConfig {
             KillTheBrioche.getInstance().saveResource("rewards.json", false);
         }
 
-        rewardsLink = gson.fromJson(FileManager.read(rewardsFile), rewardsLinkType);
+        rewardsLink = KillTheBrioche.gson.fromJson(FileManager.read(rewardsFile), rewardsLinkType);
     }
 
     public static void save(){
         File rewardsFile = FileManager.getFile("rewards.json", KillTheBrioche.getInstance());
-        FileManager.write(gson.toJson(rewardsLink), rewardsFile);
+        FileManager.write(KillTheBrioche.gson.toJson(rewardsLink), rewardsFile);
     }
 
     public static void loadTwitchRewards(TwitchBridge bridge){
