@@ -3,15 +3,15 @@ package fr.tt54.killTheBrioche.twitch;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
+import com.github.twitch4j.eventsub.Conduit;
+import com.github.twitch4j.eventsub.EventSubSubscription;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.eventsub.socket.IEventSubConduit;
 import com.github.twitch4j.eventsub.socket.conduit.TwitchConduitSocketPool;
 import com.github.twitch4j.eventsub.socket.conduit.exceptions.*;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
-import com.github.twitch4j.helix.domain.CustomReward;
-import com.github.twitch4j.helix.domain.CustomRewardList;
-import com.github.twitch4j.helix.domain.User;
-import com.github.twitch4j.helix.domain.UserList;
+import com.github.twitch4j.helix.domain.*;
 import com.google.gson.Gson;
 import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.utils.FileManager;
@@ -90,6 +90,54 @@ public class TwitchBridge {
 
         this.lastTokenRefresh = System.currentTimeMillis() / 1000;
 
+        TwitchIdentityProvider identityProvider =
+                new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
+
+        OAuth2Credential appToken =
+                identityProvider.getAppAccessToken();
+
+        EventSubSubscriptionList subs =
+                twitchClient.getHelix()
+                        .getEventSubSubscriptions(
+                                appToken.getAccessToken(),
+                                null,
+                                null,
+                                null
+                        )
+                        .execute();
+
+        System.out.println("Subscriptions trouvées : " + subs.getTotal());
+
+        // 4️⃣ Supprimer chaque subscription
+        for (EventSubSubscription sub : subs.getSubscriptions()) {
+            System.out.println("Suppression: " + sub.getId());
+
+            twitchClient.getHelix()
+                    .deleteEventSubSubscription(
+                            appToken.getAccessToken(),
+                            sub.getId()
+                    )
+                    .execute();
+        }
+
+        System.out.println("✅ Toutes les subscriptions ont été supprimées.");
+
+        ConduitList conduits = twitchClient.getHelix()
+                .getConduits(appToken.getAccessToken())
+                .execute();
+
+        System.out.println("Conduits trouvés: " + conduits.getConduits().size());
+        for (Conduit conduit : conduits.getConduits()) {
+            System.out.println("Suppression conduit: " + conduit.getId());
+
+            twitchClient.getHelix()
+                    .deleteConduit(
+                            appToken.getAccessToken(),
+                            conduit.getId()
+                    )
+                    .execute();
+        }
+
         connect();
     }
 
@@ -152,7 +200,9 @@ public class TwitchBridge {
         this.currentUser = getCurrentUser(twitchClient);
 
         try {
-            if(conduit != null) conduit.close();
+            if(conduit != null) {
+                conduit.close();
+            }
             conduit = TwitchConduitSocketPool.create(spec -> {
                 spec.clientId(this.clientId);
                 spec.clientSecret(this.clientSecret);

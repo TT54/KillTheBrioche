@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class KillTheBrioche extends JavaPlugin {
@@ -45,13 +46,16 @@ public final class KillTheBrioche extends JavaPlugin {
         new BukkitRunnable(){
             @Override
             public void run() {
-                try {
                     Bukkit.broadcast(Component.text("Reconnexion à l'API Twitch", NamedTextColor.GRAY));
-                    TwitchBridge.instance.refreshToken();
-                    System.out.println("Token refreshed");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                    new Thread(() -> {
+                        try {
+                            TwitchBridge.instance.refreshToken();
+                            System.out.println("Token refreshed");
+                        } catch (IOException e) {
+                            logger.log(Level.SEVERE, "Erreur lors du refresh", e);
+                        }
+                    }).start();
+
             }
         }.runTaskTimer(this, 20 * 60, 20 * 60);
     }
