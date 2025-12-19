@@ -5,6 +5,7 @@ import fr.tt54.killTheBrioche.inventories.CorePersonalInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
 import fr.tt54.killTheBrioche.rewards.RewardsConfig;
 import fr.tt54.killTheBrioche.utils.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -36,6 +37,7 @@ public class MCRewardsInventory extends CorePersonalInventory {
 
         this.setRewardSlot(inv, RewardsConfig.rtp2500, 9 * 3 + 3);
         this.setRewardSlot(inv, RewardsConfig.tpAncientCity, 9 * 3 + 4);
+        this.setRewardSlot(inv, RewardsConfig.breakBlocks, 9 * 3 + 5);
 
         this.setRewardSlot(inv, RewardsConfig.locateVillage, 9 * 4 + 3);
 

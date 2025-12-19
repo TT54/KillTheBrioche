@@ -36,6 +36,7 @@ public class RewardsConfig {
     public static final MCReward effectRegen = registerMCReward(new EffectReward(PotionEffectType.REGENERATION, 0, 5, Material.GOLDEN_APPLE));
     public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL));
     public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER));
+    public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE));
     public static final MCReward locateVillage = registerMCReward(new VillageLocateReward(Material.EMERALD));
 
     public static void load() {
