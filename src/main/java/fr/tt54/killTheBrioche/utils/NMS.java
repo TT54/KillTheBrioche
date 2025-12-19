@@ -2,6 +2,8 @@ package fr.tt54.killTheBrioche.utils;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -12,32 +14,24 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+
 public class NMS {
 
     public static Location locateStructure(Player player, String structureKey) {
-        // Récupérer le monde NMS
         ServerLevel level = ((CraftWorld) player.getWorld()).getHandle();
-
-        // Récupérer le registre des structures
         Registry<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
 
-        // Clé de la structure "minecraft:ancient_city"
-        ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE,
-                Identifier.tryParse(structureKey));
+        ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, Identifier.tryParse(structureKey));
 
-        // Récupérer le HolderSet correspondant
-        var holderOpt = registry.get(key).map(holder -> net.minecraft.core.HolderSet.direct(holder));
+        Optional<HolderSet<Structure>> holderOpt = registry.get(key).map(HolderSet::direct);
         if (holderOpt.isEmpty()) {
             player.sendMessage("§cStructure introuvable dans le registre !");
             return null;
         }
 
-        // Position du joueur
         BlockPos origin = BlockPos.containing(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ());
-
-        // Chercher la structure la plus proche
-        Pair<BlockPos, net.minecraft.core.Holder<Structure>> pair =
-                level.getChunkSource().getGenerator().findNearestMapStructure(level, holderOpt.get(), origin, 100, false);
+        Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, holderOpt.get(), origin, 100, false);
 
         if (pair == null) {
             player.sendMessage("§cAucune structure trouvée à proximité !");
