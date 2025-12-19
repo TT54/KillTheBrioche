@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public class NMS {
 
-    public static Location locateAncientCity(Player player) {
+    public static Location locateStructure(Player player, String structureKey) {
         // Récupérer le monde NMS
         ServerLevel level = ((CraftWorld) player.getWorld()).getHandle();
 
@@ -23,7 +23,7 @@ public class NMS {
 
         // Clé de la structure "minecraft:ancient_city"
         ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE,
-                Identifier.tryParse("minecraft:ancient_city"));
+                Identifier.tryParse(structureKey));
 
         // Récupérer le HolderSet correspondant
         var holderOpt = registry.get(key).map(holder -> net.minecraft.core.HolderSet.direct(holder));

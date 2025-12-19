@@ -10,8 +10,6 @@ import fr.tt54.killTheBrioche.utils.FileManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 
@@ -37,7 +35,8 @@ public class RewardsConfig {
     public static final MCReward effectHunger = registerMCReward(new EffectReward(PotionEffectType.HUNGER, 1, 10, Material.ROTTEN_FLESH));
     public static final MCReward effectRegen = registerMCReward(new EffectReward(PotionEffectType.REGENERATION, 0, 5, Material.GOLDEN_APPLE));
     public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL));
-    public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportation(Material.SCULK_SHRIEKER));
+    public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER));
+    public static final MCReward locateVillage = registerMCReward(new VillageLocateReward(Material.EMERALD));
 
     public static void load() {
         rewardsLink.clear();

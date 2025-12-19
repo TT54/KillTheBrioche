@@ -5,15 +5,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class AncientCityTeleportation extends MCReward{
+public class AncientCityTeleportationReward extends MCReward{
 
-    public AncientCityTeleportation(Material display) {
+    public AncientCityTeleportationReward(Material display) {
         super("teleport_ancient_city", "Téléportation vers une Ancient City", "§eVous avez été téléporté vers l'§c§lAncient City§e la plus proche", display);
     }
 
     @Override
     public void execute(Player target) {
-        Location location = NMS.locateAncientCity(target);
+        Location location = NMS.locateStructure(target, "minecraft:ancient_city");
         if(location != null){
             for(int i = location.getWorld().getMinHeight(); i < location.getWorld().getMaxHeight(); i++){
                 Location loc = location.clone();

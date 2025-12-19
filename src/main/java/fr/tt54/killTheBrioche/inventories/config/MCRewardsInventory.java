@@ -25,7 +25,7 @@ public class MCRewardsInventory extends CorePersonalInventory {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inv = createBaseInventory(5);
+        Inventory inv = createBaseInventory(6);
 
         this.setRewardSlot(inv, RewardsConfig.spawnZombie, 9 + 3);
         this.setRewardSlot(inv, RewardsConfig.spawnSkeleton, 9 + 4);
@@ -36,6 +36,8 @@ public class MCRewardsInventory extends CorePersonalInventory {
 
         this.setRewardSlot(inv, RewardsConfig.rtp2500, 9 * 3 + 3);
         this.setRewardSlot(inv, RewardsConfig.tpAncientCity, 9 * 3 + 4);
+
+        this.setRewardSlot(inv, RewardsConfig.locateVillage, 9 * 4 + 3);
 
         return inv;
     }
