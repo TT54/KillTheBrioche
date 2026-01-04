@@ -9,7 +9,6 @@ import com.github.twitch4j.eventsub.EventSubSubscription;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.eventsub.socket.IEventSubConduit;
 import com.github.twitch4j.eventsub.socket.conduit.TwitchConduitSocketPool;
-import com.github.twitch4j.eventsub.socket.conduit.exceptions.*;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
 import com.github.twitch4j.helix.domain.*;
 import com.google.gson.Gson;
@@ -88,7 +87,7 @@ public class TwitchBridge {
         token = new Gson().fromJson(body, TwitchToken.class);
         saveTwitchToken();
 
-        this.lastTokenRefresh = System.currentTimeMillis() / 1000;
+        this.lastTokenRefresh = System.currentTimeMillis();
 
         TwitchIdentityProvider identityProvider =
                 new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
@@ -184,7 +183,7 @@ public class TwitchBridge {
         token = new Gson().fromJson(body, TwitchToken.class);
         this.saveTwitchToken();
 
-        this.lastTokenRefresh = System.currentTimeMillis() / 1000;
+        this.lastTokenRefresh = System.currentTimeMillis();
 
         connect();
     }
