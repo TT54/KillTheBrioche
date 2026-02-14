@@ -250,6 +250,26 @@ public class TwitchBridge {
         return new ArrayList<>();
     }
 
+    public CustomReward createCustomReward(String rewardId, String title, String description, int cost, int cooldownInSeconds){
+        CustomReward reward = CustomReward.builder()
+                .title(title)
+                .prompt(description)
+                .globalCooldownSetting(CustomReward.GlobalCooldownSetting.builder()
+                        .globalCooldownSeconds(cooldownInSeconds)
+                        .isEnabled(cooldownInSeconds > 0)
+                        .build()
+                )
+                .cost(cost)
+                .id(rewardId)
+                .build();
+        this.twitchClient.getHelix().createCustomReward(this.token.access_token(), this.currentUser.getId(), reward).execute();
+        return reward;
+    }
+
+    public void deleteCustomReward(String rewardId){
+        this.twitchClient.getHelix().deleteCustomReward(this.token.access_token(), this.currentUser.getId(), rewardId).execute();
+    }
+
     public boolean isUserConnected() {
         return this.token != null;
     }
