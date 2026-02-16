@@ -24,6 +24,8 @@ dependencies {
 
     implementation 'org.apache.httpcomponents:httpcore:4.4.1'
     implementation 'org.apache.httpcomponents:httpclient:4.5'
+
+    implementation 'fr.mrmicky:fastboard:2.1.5'
 }
 
 tasks {
@@ -60,4 +62,8 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+shadowJar {
+    relocate 'fr.mrmicky.fastboard', 'fr.impyria.fastboard'
 }
