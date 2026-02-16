@@ -33,5 +33,7 @@ public class SpawnMobReward extends MCReward {
                 location.add(0, 1, 0);
             }
         }
+
+        target.getWorld().spawnEntity(target.getLocation(), this.type);
     }
 }
