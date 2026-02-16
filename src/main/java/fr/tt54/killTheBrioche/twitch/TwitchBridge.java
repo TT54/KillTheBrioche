@@ -251,6 +251,7 @@ public class TwitchBridge {
     }
 
     public CustomReward createCustomReward(String rewardId, String title, String description, int cost, int cooldownInSeconds){
+        if(this.currentUser == null) return null;
         CustomReward reward = CustomReward.builder()
                 .title(title)
                 .prompt(description)
@@ -267,6 +268,7 @@ public class TwitchBridge {
     }
 
     public void deleteCustomReward(String rewardId){
+        if(this.currentUser == null) return;
         this.twitchClient.getHelix().deleteCustomReward(this.token.access_token(), this.currentUser.getId(), rewardId).execute();
     }
 
