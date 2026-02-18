@@ -14,6 +14,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,12 +64,24 @@ public final class KillTheBrioche extends JavaPlugin {
                 }).start();
             }
         }.runTaskTimer(this, 20 * 60 * 10, 20 * 60 * 10);
+
+        enableHealthInfo();
     }
 
     @Override
     public void onDisable() {
         OAuthCallbackServer.stopServer();
         RewardsManager.save();
+    }
+
+    private void enableHealthInfo(){
+        Scoreboard scoreboard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
+        if(scoreboard.getObjective("health") == null) {
+            Objective objective = Bukkit.getServer().getScoreboardManager().getMainScoreboard().registerNewObjective("health", Criteria.HEALTH, Component.text("❤", NamedTextColor.RED));
+            objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            objective.setAutoUpdateDisplay(true);
+            objective.setRenderType(RenderType.INTEGER);
+        }
     }
 
     public static KillTheBrioche getInstance() {
