@@ -221,6 +221,7 @@ public class TwitchBridge {
     }
 
     public String getConnectionUrlString(){
+        // TODO Ajouter la permission pour gérer les récompenses (channel:manage:redemptions) et pour écouter les subscriptions (channel:read:subscriptions)
         return "https://id.twitch.tv/oauth2/authorize" +
                 "?response_type=code" +
                 "&client_id=" + this.clientId +
