@@ -15,7 +15,7 @@ public class VillageLocateReward extends MCReward{
 
     @Override
     public void execute(Player target) {
-        Location location = NMS.locateStructure(target, "minecraft:village_plains");
+        Location location = NMS.locateStructure(target, "minecraft:village_plains", target.getLocation());
         if(location != null){
             Bukkit.broadcast(Component.text("§eUn village a été trouvé en §c§l" + location.getBlockX() + " / " + location.getBlockZ()));
         }

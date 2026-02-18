@@ -1,8 +1,10 @@
 package fr.tt54.killTheBrioche.rewards;
 
 import fr.tt54.killTheBrioche.utils.NMS;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class AncientCityTeleportationReward extends MCReward{
@@ -13,7 +15,8 @@ public class AncientCityTeleportationReward extends MCReward{
 
     @Override
     public void execute(Player target) {
-        Location location = NMS.locateStructure(target, "minecraft:ancient_city");
+        Location centerLocation = target.getWorld().getEnvironment() == World.Environment.NORMAL ? target.getLocation() : Bukkit.getWorlds().getFirst().getSpawnLocation();
+        Location location = NMS.locateStructure(target, "minecraft:ancient_city", centerLocation);
         if(location != null){
             for(int i = location.getWorld().getMinHeight(); i < location.getWorld().getMaxHeight(); i++){
                 Location loc = location.clone();

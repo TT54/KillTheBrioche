@@ -38,7 +38,6 @@ public class MCRewardsInventory extends CorePersonalInventory {
         this.setRewardSlot(inv, RewardsManager.breakBlocks, 9 * 3 + 5);
 
         this.setRewardSlot(inv, RewardsManager.effectRegen, 9 * 4 + 2);
-        this.setRewardSlot(inv, RewardsManager.locateVillage, 9 * 4 + 3);
         this.setRewardSlot(inv, RewardsManager.randomFood, 9 * 4 + 5);
         this.setRewardSlot(inv, RewardsManager.randomStuff, 9 * 4 + 6);
 

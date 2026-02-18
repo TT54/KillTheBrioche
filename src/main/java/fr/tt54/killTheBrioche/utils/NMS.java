@@ -18,8 +18,8 @@ import java.util.Optional;
 
 public class NMS {
 
-    public static Location locateStructure(Player player, String structureKey) {
-        ServerLevel level = ((CraftWorld) player.getWorld()).getHandle();
+    public static Location locateStructure(Player player, String structureKey, Location location) {
+        ServerLevel level = ((CraftWorld) location.getWorld()).getHandle();
         Registry<Structure> registry = level.registryAccess().lookupOrThrow(Registries.STRUCTURE);
 
         ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, Identifier.tryParse(structureKey));
@@ -30,7 +30,7 @@ public class NMS {
             return null;
         }
 
-        BlockPos origin = BlockPos.containing(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ());
+        BlockPos origin = BlockPos.containing(location.getX(), location.getY(), location.getZ());
         Pair<BlockPos, Holder<Structure>> pair = level.getChunkSource().getGenerator().findNearestMapStructure(level, holderOpt.get(), origin, 100, false);
 
         if (pair == null) {

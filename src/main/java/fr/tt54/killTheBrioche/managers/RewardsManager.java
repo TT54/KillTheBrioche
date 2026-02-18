@@ -28,17 +28,22 @@ public class RewardsManager {
 
     private static final Type rewardsLinkType = new TypeToken<@NotNull Map<String, String>>() {}.getType();
 
-    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5));
-    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5));
-    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5));
+    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5, 1));
+    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5, 1));
+    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5, 1));
+    public static final MCReward spawnWitch = registerMCReward(new SpawnMobReward(EntityType.WITCH, 5, 1));
+    public static final MCReward spawnVex = registerMCReward(new SpawnMobReward(EntityType.VEX, 5, 1));
+    public static final MCReward spawn5Zombies = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 10, 5));
+    public static final MCReward spawn5Skeletons = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 10, 5));
     public static final MCReward effectHunger = registerMCReward(new EffectReward(PotionEffectType.HUNGER, 1, 10, Material.ROTTEN_FLESH));
     public static final MCReward effectRegen = registerMCReward(new EffectReward(PotionEffectType.REGENERATION, 0, 5, Material.GOLDEN_APPLE));
     public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL));
     public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER));
     public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE));
-    public static final MCReward locateVillage = registerMCReward(new VillageLocateReward(Material.EMERALD));
     public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF));
     public static final MCReward randomStuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE));
+    public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1));
+
 
     public static void load() {
         rewardsLink.clear();
