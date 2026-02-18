@@ -8,7 +8,6 @@ import fr.tt54.killTheBrioche.rewards.*;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import fr.tt54.killTheBrioche.utils.FileManager;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -45,6 +44,7 @@ public class RewardsManager {
     public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1));
     public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward());
     public static final MCReward deathTPReward = registerMCReward(new DeathTPReward());
+    public static final MCReward killMobsAround = registerMCReward(new KillMobsAround(25));
 
 
     public static void load() {
