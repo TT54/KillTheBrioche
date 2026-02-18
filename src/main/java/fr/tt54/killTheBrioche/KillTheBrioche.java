@@ -6,6 +6,8 @@ import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.cmd.CmdUseDeathTeleportation;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.managers.RewardsManager;
+import fr.tt54.killTheBrioche.scoreboard.GameScoreboard;
+import fr.tt54.killTheBrioche.scoreboard.ScoreboardManager;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -25,6 +27,7 @@ public final class KillTheBrioche extends JavaPlugin {
 
     public static Logger logger;
     public static Gson gson = new GsonBuilder().create();
+    public static GameScoreboard gameScoreboard = new GameScoreboard();
 
     private static KillTheBrioche instance;
 

@@ -1,6 +1,8 @@
 package fr.tt54.killTheBrioche.listeners;
 
+import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.managers.RunManager;
+import fr.tt54.killTheBrioche.scoreboard.ScoreboardManager;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -25,6 +27,7 @@ public class PlayerListener implements Listener {
         }
 
         RunManager.updateListName(player);
+        ScoreboardManager.showScoreboard(player, KillTheBrioche.gameScoreboard);
     }
 
     @EventHandler
