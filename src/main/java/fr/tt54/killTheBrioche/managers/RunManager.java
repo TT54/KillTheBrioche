@@ -124,6 +124,7 @@ public class RunManager {
     public static void startRun() {
         setStarted(true);
         time = 0;
+        Bukkit.getWorlds().getFirst().setTime(0);
         for(UUID runnerUUID : runners){
             runnerCashPrice.put(runnerUUID, INITIAL_CASH_PRICE);
             runnerCashShield.put(runnerUUID, 0);
