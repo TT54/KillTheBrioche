@@ -78,6 +78,7 @@ public final class KillTheBrioche extends JavaPlugin {
     public void onDisable() {
         OAuthCallbackServer.stopServer();
         RewardsManager.save();
+        RewardsManager.deleteTwitchRewards();
     }
 
     private void enableHealthInfo(){
