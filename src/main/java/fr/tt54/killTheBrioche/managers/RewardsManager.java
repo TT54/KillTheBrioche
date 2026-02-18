@@ -25,7 +25,6 @@ public class RewardsManager {
     private static Map<String, String> rewardsLink = new HashMap<>();
     private static final Map<String, CustomReward> twitchRewardsId = new HashMap<>();
     private static final Map<String, MCReward> mcRewards = new HashMap<>();
-    private static final Set<UUID> runners = new HashSet<>();
 
     private static final Type rewardsLinkType = new TypeToken<@NotNull Map<String, String>>() {}.getType();
 
@@ -79,12 +78,12 @@ public class RewardsManager {
 
     public static void executeReward(MCReward mcReward){
         Bukkit.getScheduler().runTask(KillTheBrioche.getInstance(), () -> {
-            for(UUID uuid : runners){
+            for(UUID uuid : RunManager.getRunners()){
                 Player player = Bukkit.getPlayer(uuid);
                 if(player != null) mcReward.execute(player);
             }
             for(Player player : Bukkit.getOnlinePlayers()){
-                if(!isRunner(player.getUniqueId())){
+                if(!RunManager.isRunner(player.getUniqueId())){
                     player.sendMessage(Component.text(mcReward.getMessage()));
                 }
             }
@@ -118,36 +117,5 @@ public class RewardsManager {
 
     public static MCReward getMcReward(String rewardID) {
         return mcRewards.get(rewardID);
-    }
-
-    public static Set<UUID> getRunners() {
-        return runners;
-    }
-
-    public static void addRunner(Player player){
-        runners.add(player.getUniqueId());
-        updateListName(player);
-    }
-
-    public static void removeRunner(UUID uuid){
-        runners.remove(uuid);
-        Player player = Bukkit.getPlayer(uuid);
-        if(player != null){
-            updateListName(player);
-        }
-    }
-
-    public static boolean isRunner(UUID uuid){
-        return runners.contains(uuid);
-    }
-
-    public static void updateListName(Player player) {
-        if(RewardsManager.isRunner(player.getUniqueId())){
-            player.playerListName(Component.text("[RUNNER] ", NamedTextColor.RED)
-                    .append(Component.text(player.getName(), NamedTextColor.WHITE)));
-        } else{
-            player.playerListName(Component.text("[SPECTATOR] ", NamedTextColor.DARK_GRAY)
-                    .append(Component.text(player.getName(), NamedTextColor.GRAY)));
-        }
     }
 }

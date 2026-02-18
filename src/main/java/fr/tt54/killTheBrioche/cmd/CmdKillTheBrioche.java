@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.tt54.killTheBrioche.inventories.config.MCRewardsInventory;
+import fr.tt54.killTheBrioche.managers.RunManager;
 import fr.tt54.killTheBrioche.rewards.MCReward;
 import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
@@ -76,7 +77,7 @@ public class CmdKillTheBrioche {
                                         final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class);
 
                                         for(Player player : targetResolver.resolve(ctx.getSource())){
-                                            RewardsManager.addRunner(player);
+                                            RunManager.addRunner(player);
                                         }
                                         sender.sendMessage(Component.text("Runners ajoutés : " + targetResolver.resolve(ctx.getSource()).stream().map(Player::getName).toList(), NamedTextColor.GREEN));
 
@@ -90,7 +91,7 @@ public class CmdKillTheBrioche {
                                         final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class);
 
                                         for(Player player : targetResolver.resolve(ctx.getSource())){
-                                            RewardsManager.removeRunner(player.getUniqueId());
+                                            RunManager.removeRunner(player.getUniqueId());
                                         }
                                         sender.sendMessage(Component.text("Runners retirés : " + targetResolver.resolve(ctx.getSource()).stream().map(Player::getName).toList(), NamedTextColor.GREEN));
 
