@@ -7,6 +7,7 @@ import com.github.twitch4j.auth.providers.TwitchIdentityProvider;
 import com.github.twitch4j.eventsub.Conduit;
 import com.github.twitch4j.eventsub.EventSubSubscription;
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
+import com.github.twitch4j.eventsub.events.ChannelSubscriptionMessageEvent;
 import com.github.twitch4j.eventsub.socket.IEventSubConduit;
 import com.github.twitch4j.eventsub.socket.conduit.TwitchConduitSocketPool;
 import com.github.twitch4j.eventsub.subscriptions.SubscriptionTypes;
@@ -51,6 +52,7 @@ public class TwitchBridge {
     private IEventSubConduit conduit;
     private Consumer<TwitchBridge> connectionConsumer;
     private Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer;
+    private Consumer<ChannelSubscriptionMessageEvent> subEventConsumer;
 
     public TwitchBridge(String clientId, String clientSecret) {
         this.clientId = clientId;
@@ -65,6 +67,12 @@ public class TwitchBridge {
     @SuppressWarnings("UnusedReturnValue")
     public TwitchBridge onRewardRedemption(Consumer<ChannelPointsCustomRewardRedemptionEvent> redemptionEventConsumer){
         this.redemptionEventConsumer = redemptionEventConsumer;
+        return this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public TwitchBridge onSub(Consumer<ChannelSubscriptionMessageEvent> subEventConsumer){
+        this.subEventConsumer = subEventConsumer;
         return this;
     }
 
@@ -89,53 +97,7 @@ public class TwitchBridge {
 
         this.lastTokenRefresh = System.currentTimeMillis();
 
-        TwitchIdentityProvider identityProvider =
-                new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
 
-        OAuth2Credential appToken =
-                identityProvider.getAppAccessToken();
-
-        EventSubSubscriptionList subs =
-                twitchClient.getHelix()
-                        .getEventSubSubscriptions(
-                                appToken.getAccessToken(),
-                                null,
-                                null,
-                                null
-                        )
-                        .execute();
-
-        System.out.println("Subscriptions trouvées : " + subs.getTotal());
-
-        // 4️⃣ Supprimer chaque subscription
-        for (EventSubSubscription sub : subs.getSubscriptions()) {
-            System.out.println("Suppression: " + sub.getId());
-
-            twitchClient.getHelix()
-                    .deleteEventSubSubscription(
-                            appToken.getAccessToken(),
-                            sub.getId()
-                    )
-                    .execute();
-        }
-
-        System.out.println("✅ Toutes les subscriptions ont été supprimées.");
-
-        ConduitList conduits = twitchClient.getHelix()
-                .getConduits(appToken.getAccessToken())
-                .execute();
-
-        System.out.println("Conduits trouvés: " + conduits.getConduits().size());
-        for (Conduit conduit : conduits.getConduits()) {
-            System.out.println("Suppression conduit: " + conduit.getId());
-
-            twitchClient.getHelix()
-                    .deleteConduit(
-                            appToken.getAccessToken(),
-                            conduit.getId()
-                    )
-                    .execute();
-        }
 
         connect();
     }
@@ -188,6 +150,55 @@ public class TwitchBridge {
         connect();
     }
 
+    private void deleteSubscriptions(){
+        TwitchIdentityProvider identityProvider =
+                new TwitchIdentityProvider(this.clientId, this.clientSecret, null);
+
+        OAuth2Credential appToken =
+                identityProvider.getAppAccessToken();
+
+        EventSubSubscriptionList subs =
+                twitchClient.getHelix()
+                        .getEventSubSubscriptions(
+                                appToken.getAccessToken(),
+                                null,
+                                null,
+                                null
+                        )
+                        .execute();
+
+        System.out.println("Subscriptions trouvées : " + subs.getTotal());
+
+        for (EventSubSubscription sub : subs.getSubscriptions()) {
+            System.out.println("Suppression: " + sub.getId());
+
+            twitchClient.getHelix()
+                    .deleteEventSubSubscription(
+                            appToken.getAccessToken(),
+                            sub.getId()
+                    )
+                    .execute();
+        }
+
+        System.out.println("✅ Toutes les subscriptions ont été supprimées.");
+
+        ConduitList conduits = twitchClient.getHelix()
+                .getConduits(appToken.getAccessToken())
+                .execute();
+
+        System.out.println("Conduits trouvés: " + conduits.getConduits().size());
+        for (Conduit conduit : conduits.getConduits()) {
+            System.out.println("Suppression conduit: " + conduit.getId());
+
+            twitchClient.getHelix()
+                    .deleteConduit(
+                            appToken.getAccessToken(),
+                            conduit.getId()
+                    )
+                    .execute();
+        }
+    }
+
     public void connect(){
         OAuthCallbackServer.stopServer();
 
@@ -197,6 +208,8 @@ public class TwitchBridge {
                 .withDefaultAuthToken(credential)
                 .build();
         this.currentUser = getCurrentUser(twitchClient);
+
+        this.deleteSubscriptions();
 
         try {
             if(conduit != null) {
@@ -208,8 +221,12 @@ public class TwitchBridge {
                 spec.poolShards(4);
             });
             conduit.register(SubscriptionTypes.CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD, b -> b.broadcasterUserId(currentUser.getId()).build());
+            conduit.register(SubscriptionTypes.CHANNEL_SUBSCRIPTION_MESSAGE, b -> b.broadcasterUserId(currentUser.getId()).build());
             conduit.getEventManager().onEvent(ChannelPointsCustomRewardRedemptionEvent.class, event -> {
                 if(this.redemptionEventConsumer != null) this.redemptionEventConsumer.accept(event);
+            });
+            conduit.getEventManager().onEvent(ChannelSubscriptionMessageEvent.class, event ->  {
+
             });
         } catch (Exception e) {
             KillTheBrioche.logger.log(Level.SEVERE, "Impossible d'écouter l'achat de récompenses via les points de chaîne", e);
@@ -221,12 +238,11 @@ public class TwitchBridge {
     }
 
     public String getConnectionUrlString(){
-        // TODO Ajouter la permission pour gérer les récompenses (channel:manage:redemptions) et pour écouter les subscriptions (channel:read:subscriptions)
         return "https://id.twitch.tv/oauth2/authorize" +
                 "?response_type=code" +
                 "&client_id=" + this.clientId +
                 "&redirect_uri=http://localhost:8080/callback" +
-                "&scope=channel:read:redemptions" +
+                "&scope=channel:read:redemptions%20channel:manage:redemptions%20channel:read:subscriptions" +
                 "&state=RANDOM_STRING";
     }
 

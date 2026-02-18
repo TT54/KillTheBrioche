@@ -1,6 +1,7 @@
 package fr.tt54.killTheBrioche.managers;
 
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
+import com.github.twitch4j.eventsub.events.ChannelSubscriptionMessageEvent;
 import com.github.twitch4j.helix.domain.CustomReward;
 import com.google.common.reflect.TypeToken;
 import fr.tt54.killTheBrioche.KillTheBrioche;
@@ -124,5 +125,9 @@ public class RewardsManager {
 
     public static MCReward getMcReward(String rewardID) {
         return mcRewards.get(rewardID);
+    }
+
+    public static void onTwitchSub(ChannelSubscriptionMessageEvent event) {
+        // TODO : Faire une reward spéciale pour les subs
     }
 }

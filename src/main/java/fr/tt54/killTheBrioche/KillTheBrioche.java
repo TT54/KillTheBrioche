@@ -40,7 +40,7 @@ public final class KillTheBrioche extends JavaPlugin {
         this.saveDefaultConfig();
 
         TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
-        TwitchBridge.instance.onConnection(RewardsManager::loadTwitchRewards).onRewardRedemption(RewardsManager::onTwitchRewardRedeemed);
+        TwitchBridge.instance.onConnection(RewardsManager::loadTwitchRewards).onRewardRedemption(RewardsManager::onTwitchRewardRedeemed).onSub(RewardsManager::onTwitchSub);
         OAuthCallbackServer.launchServer();
         TwitchBridge.instance.loadTwitchToken();
 
