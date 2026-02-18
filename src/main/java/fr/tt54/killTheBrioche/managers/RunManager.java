@@ -89,4 +89,19 @@ public class RunManager {
             }
         }
     }
+
+    public static void tryToTeleportToLastDeath(Player player) {
+        int bonusAmount = getDeathTeleportationBonus(player.getUniqueId());
+        if(bonusAmount > 0){
+            if(player.getLastDeathLocation() == null){
+                player.sendMessage(Component.text("Aucun point de mort trouvé pour vous téléporter !", NamedTextColor.RED));
+                return;
+            }
+            addDeathTeleportationBonus(player.getUniqueId(), -1);
+            player.sendMessage(Component.text("Vous avez utilisé un bonus de téléportation à votre dernier point de mort ! Il vous en reste " + getDeathTeleportationBonus(player.getUniqueId()), NamedTextColor.GREEN));
+            player.teleport(player.getLastDeathLocation());
+        } else{
+            player.sendMessage(Component.text("Vous n'avez aucun bonus de téléportation à votre dernier point de mort !", NamedTextColor.RED));
+        }
+    }
 }

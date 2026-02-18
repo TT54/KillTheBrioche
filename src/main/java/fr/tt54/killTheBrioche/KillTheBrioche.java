@@ -3,6 +3,7 @@ package fr.tt54.killTheBrioche;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
+import fr.tt54.killTheBrioche.cmd.CmdUseDeathTeleportation;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
@@ -42,6 +43,7 @@ public final class KillTheBrioche extends JavaPlugin {
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(CmdKillTheBrioche.ktbCommand, List.of("killthebrioche", "ktb"));
+            commands.registrar().register(CmdUseDeathTeleportation.deathTpCommand, List.of("deathtp", "dtp"));
         });
 
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
