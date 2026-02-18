@@ -8,24 +8,24 @@ import fr.tt54.killTheBrioche.rewards.*;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import fr.tt54.killTheBrioche.utils.FileManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class RewardsManager {
 
     private static Map<String, String> rewardsLink = new HashMap<>();
     private static final Map<String, CustomReward> twitchRewardsId = new HashMap<>();
     private static final Map<String, MCReward> mcRewards = new HashMap<>();
+    private static final Set<UUID> runners = new HashSet<>();
 
     private static final Type rewardsLinkType = new TypeToken<@NotNull Map<String, String>>() {}.getType();
 
@@ -79,8 +79,16 @@ public class RewardsManager {
 
     public static void executeReward(MCReward mcReward){
         Bukkit.getScheduler().runTask(KillTheBrioche.getInstance(), () -> {
-            Bukkit.getOnlinePlayers().forEach(mcReward::execute);
-            Bukkit.broadcast(Component.text(mcReward.getMessage()));
+            for(UUID uuid : runners){
+                Player player = Bukkit.getPlayer(uuid);
+                if(player != null) mcReward.execute(player);
+            }
+            for(Player player : Bukkit.getOnlinePlayers()){
+                if(!isRunner(player.getUniqueId())){
+                    player.sendMessage(Component.text(mcReward.getMessage()));
+                }
+            }
+            KillTheBrioche.logger.info("Récompense exécutée : " + mcReward.getId());
         });
     }
 
@@ -110,5 +118,36 @@ public class RewardsManager {
 
     public static MCReward getMcReward(String rewardID) {
         return mcRewards.get(rewardID);
+    }
+
+    public static Set<UUID> getRunners() {
+        return runners;
+    }
+
+    public static void addRunner(Player player){
+        runners.add(player.getUniqueId());
+        updateListName(player);
+    }
+
+    public static void removeRunner(UUID uuid){
+        runners.remove(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        if(player != null){
+            updateListName(player);
+        }
+    }
+
+    public static boolean isRunner(UUID uuid){
+        return runners.contains(uuid);
+    }
+
+    public static void updateListName(Player player) {
+        if(RewardsManager.isRunner(player.getUniqueId())){
+            player.playerListName(Component.text("[RUNNER] ", NamedTextColor.RED)
+                    .append(Component.text(player.getName(), NamedTextColor.WHITE)));
+        } else{
+            player.playerListName(Component.text("[SPECTATOR] ", NamedTextColor.DARK_GRAY)
+                    .append(Component.text(player.getName(), NamedTextColor.GRAY)));
+        }
     }
 }

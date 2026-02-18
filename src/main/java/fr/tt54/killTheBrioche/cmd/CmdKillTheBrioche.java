@@ -9,6 +9,8 @@ import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -66,6 +68,36 @@ public class CmdKillTheBrioche {
                                 .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, ClickEvent.Payload.string(TwitchBridge.instance.getConnectionUrlString()))));
                         return Command.SINGLE_SUCCESS;
                     })
+            ).then(Commands.literal("runner")
+                    .then(Commands.literal("add")
+                            .then(Commands.argument("targets", ArgumentTypes.players())
+                                    .executes(ctx -> {
+                                        final CommandSender sender = ctx.getSource().getSender();
+                                        final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class);
+
+                                        for(Player player : targetResolver.resolve(ctx.getSource())){
+                                            RewardsManager.addRunner(player);
+                                        }
+                                        sender.sendMessage(Component.text("Runners ajoutés : " + targetResolver.resolve(ctx.getSource()).stream().map(Player::getName).toList(), NamedTextColor.GREEN));
+
+                                        return Command.SINGLE_SUCCESS;
+                                    })
+                            )
+                    ).then(Commands.literal("remove")
+                            .then(Commands.argument("targets", ArgumentTypes.players())
+                                    .executes(ctx -> {
+                                        final CommandSender sender = ctx.getSource().getSender();
+                                        final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class);
+
+                                        for(Player player : targetResolver.resolve(ctx.getSource())){
+                                            RewardsManager.removeRunner(player.getUniqueId());
+                                        }
+                                        sender.sendMessage(Component.text("Runners retirés : " + targetResolver.resolve(ctx.getSource()).stream().map(Player::getName).toList(), NamedTextColor.GREEN));
+
+                                        return Command.SINGLE_SUCCESS;
+                                    })
+                            )
+                    )
             )
             .build();
 
