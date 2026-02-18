@@ -119,6 +119,17 @@ public class CmdKillTheBrioche {
                                     )
                             )
                     )
+            ).then(Commands.literal("start")
+                    .executes(ctx -> {
+                        final CommandSender sender = ctx.getSource().getSender();
+                        if(RunManager.isStarted()){
+                            sender.sendMessage(Component.text("§cUne partie est déjà en cours", NamedTextColor.RED));
+                        } else {
+                            RunManager.startRun();
+                            sender.sendMessage(Component.text("Partie démarrée", NamedTextColor.GREEN));
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
             )
             .build();
 

@@ -3,6 +3,7 @@ package fr.tt54.killTheBrioche.managers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,5 +119,39 @@ public class RunManager {
 
     public static int getTime() {
         return time;
+    }
+
+    public static void startRun() {
+        setStarted(true);
+        time = 0;
+        for(UUID runnerUUID : runners){
+            runnerCashPrice.put(runnerUUID, INITIAL_CASH_PRICE);
+            runnerCashShield.put(runnerUUID, 0);
+            runnerDeathTeleportationBonus.put(runnerUUID, 0);
+            Player player = Bukkit.getPlayer(runnerUUID);
+            if(player != null) {
+                player.getEnderChest().clear();
+                player.getInventory().clear();
+                player.teleport(Bukkit.getWorlds().getFirst().getSpawnLocation());
+                player.sendMessage(Component.text("La partie a commencé ! Votre cash initial est de " + INITIAL_CASH_PRICE + "€", NamedTextColor.GREEN));
+                updateListName(player);
+            }
+        }
+    }
+
+    public static void stopGame(Player winner) {
+        setStarted(false);
+        Bukkit.broadcast(Component.text("La partie est terminée !", NamedTextColor.GREEN));
+        if(winner != null) {
+            Bukkit.broadcast(Component.text("Victoire de " + winner.getName() + " avec un cash de " + getCashPrice(winner.getUniqueId()) + "€ !", NamedTextColor.GOLD));
+        } else {
+            Bukkit.broadcast(Component.text("Défaite des runners !", NamedTextColor.RED));
+        }
+        for(UUID runnerUUID : runners){
+            Player player = Bukkit.getPlayer(runnerUUID);
+            if(player != null) {
+                player.setGameMode(GameMode.SPECTATOR);
+            }
+        }
     }
 }

@@ -38,20 +38,17 @@ public class GameScoreboard extends ImpyriaScoreboard {
         int i = 0;
         fastBoard.updateTitle("§6§lKill The Brioche");
         fastBoard.updateLine(i++, "§7Temps restant : §e" + format.format(minutes) + ":" + format.format(seconds));
-        fastBoard.updateLine(i++, "§7");
+        fastBoard.updateLine(i++, "§a");
 
         for(UUID runnerUUID : RunManager.getRunners()){
             OfflinePlayer runner = Bukkit.getOfflinePlayer(runnerUUID);
             if(runner.getName() != null) {
                 fastBoard.updateLine(i++, "§e" + runner.getName() + " : §f" + formatDouble.format(RunManager.getCashPrice(runnerUUID)) + "€");
-                String secondLineBuilder = " ".repeat(runner.getName().length()) +
-                        "§7" +
-                        format.format(RunManager.getCashShield(runnerUUID)) +
-                        "\uD83D\uDEE1 | §b" +
-                        format.format(RunManager.getCashShield(runnerUUID)) +
-                        "TP";
-                fastBoard.updateLine(i++, secondLineBuilder);
+                fastBoard.updateLine(i++, "§7" + RunManager.getCashShield(runnerUUID) + " \uD83D\uDEE1 §8| §b" + RunManager.getDeathTeleportationBonus(runnerUUID) + " TP");
+                fastBoard.updateLine(i++, "§" + (i / 3 - 1));
             }
         }
+
+        fastBoard.updateLine(i++, "§2Objectif : §fTuer le dragon");
     }
 }
