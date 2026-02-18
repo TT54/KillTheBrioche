@@ -226,14 +226,22 @@ public class TwitchBridge {
                 if(this.redemptionEventConsumer != null) this.redemptionEventConsumer.accept(event);
             });
             conduit.getEventManager().onEvent(ChannelSubscriptionMessageEvent.class, event ->  {
-
+                if(this.subEventConsumer != null) this.subEventConsumer.accept(event);
             });
         } catch (Exception e) {
             KillTheBrioche.logger.log(Level.SEVERE, "Impossible d'écouter l'achat de récompenses via les points de chaîne", e);
             Bukkit.broadcast(Component.text("Impossible d'écouter l'achat de récompense via les points de chaîne", NamedTextColor.RED));
         }
 
-        if(this.connectionConsumer != null) this.connectionConsumer.accept(this);
+        if(this.connectionConsumer != null) {
+            try {
+                this.connectionConsumer.accept(this);
+            } catch (Exception e){
+                KillTheBrioche.logger.log(Level.SEVERE, "Erreur dans le consumer de connexion Twitch", e);
+                Bukkit.broadcast(Component.text("Erreur lors de l'exécution du consumer de connexion Twitch, vérifiez les logs pour plus d'informations", NamedTextColor.RED));
+                return;
+            }
+        }
         Bukkit.broadcast(Component.text("Connecté à l'API Twitch !", NamedTextColor.GREEN));
     }
 
