@@ -1,9 +1,10 @@
-package fr.tt54.killTheBrioche.rewards;
+package fr.tt54.killTheBrioche.managers;
 
 import com.github.twitch4j.eventsub.events.ChannelPointsCustomRewardRedemptionEvent;
 import com.github.twitch4j.helix.domain.CustomReward;
 import com.google.common.reflect.TypeToken;
 import fr.tt54.killTheBrioche.KillTheBrioche;
+import fr.tt54.killTheBrioche.rewards.*;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import fr.tt54.killTheBrioche.utils.FileManager;
 import net.kyori.adventure.text.Component;
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -19,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RewardsConfig {
+public class RewardsManager {
 
     private static Map<String, String> rewardsLink = new HashMap<>();
     private static final Map<String, CustomReward> twitchRewardsId = new HashMap<>();
     private static final Map<String, MCReward> mcRewards = new HashMap<>();
 
-    private static final Type rewardsLinkType = new TypeToken<Map<String, String>>() {}.getType();
+    private static final Type rewardsLinkType = new TypeToken<@NotNull Map<String, String>>() {}.getType();
 
     public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5));
     public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5));

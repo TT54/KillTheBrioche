@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
-import fr.tt54.killTheBrioche.rewards.RewardsConfig;
+import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -34,11 +34,11 @@ public final class KillTheBrioche extends JavaPlugin {
         this.saveDefaultConfig();
 
         TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
-        TwitchBridge.instance.onConnection(RewardsConfig::loadTwitchRewards).onRewardRedemption(RewardsConfig::onTwitchRewardRedeemed);
+        TwitchBridge.instance.onConnection(RewardsManager::loadTwitchRewards).onRewardRedemption(RewardsManager::onTwitchRewardRedeemed);
         OAuthCallbackServer.launchServer();
         TwitchBridge.instance.loadTwitchToken();
 
-        RewardsConfig.load();
+        RewardsManager.load();
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(CmdKillTheBrioche.ktbCommand, List.of("killthebrioche", "ktb"));
@@ -66,7 +66,7 @@ public final class KillTheBrioche extends JavaPlugin {
     @Override
     public void onDisable() {
         OAuthCallbackServer.stopServer();
-        RewardsConfig.save();
+        RewardsManager.save();
     }
 
     public static KillTheBrioche getInstance() {

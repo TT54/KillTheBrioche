@@ -4,7 +4,7 @@ import com.github.twitch4j.helix.domain.CustomReward;
 import fr.tt54.killTheBrioche.inventories.CorePersonalInventory;
 import fr.tt54.killTheBrioche.inventories.PageableInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
-import fr.tt54.killTheBrioche.rewards.RewardsConfig;
+import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.utils.DefaultItems;
 import fr.tt54.killTheBrioche.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -37,7 +37,7 @@ public class TwitchRewardsListInventory extends PageableInventory<CustomReward> 
 
     @Override
     protected List<CustomReward> getObjectsList() {
-        return RewardsConfig.getTwitchRewards();
+        return RewardsManager.getTwitchRewards();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TwitchRewardsListInventory extends PageableInventory<CustomReward> 
 
     @Override
     protected void onObjectClicked(InventoryClickEvent event, CustomReward twitchReward) {
-        RewardsConfig.linkRedeem(twitchReward, associatedReward);
+        RewardsManager.linkRedeem(twitchReward, associatedReward);
         previousInv.openInventory();
     }
 

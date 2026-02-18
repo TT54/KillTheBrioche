@@ -3,7 +3,7 @@ package fr.tt54.killTheBrioche.inventories.config;
 import com.github.twitch4j.helix.domain.CustomReward;
 import fr.tt54.killTheBrioche.inventories.CorePersonalInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
-import fr.tt54.killTheBrioche.rewards.RewardsConfig;
+import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.utils.ItemBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -27,26 +27,26 @@ public class MCRewardsInventory extends CorePersonalInventory {
     public @NotNull Inventory getInventory() {
         Inventory inv = createBaseInventory(6);
 
-        this.setRewardSlot(inv, RewardsConfig.spawnZombie, 9 + 3);
-        this.setRewardSlot(inv, RewardsConfig.spawnSkeleton, 9 + 4);
-        this.setRewardSlot(inv, RewardsConfig.spawnCreeper, 9 + 5);
+        this.setRewardSlot(inv, RewardsManager.spawnZombie, 9 + 3);
+        this.setRewardSlot(inv, RewardsManager.spawnSkeleton, 9 + 4);
+        this.setRewardSlot(inv, RewardsManager.spawnCreeper, 9 + 5);
 
-        this.setRewardSlot(inv, RewardsConfig.effectHunger, 9 * 2 + 4);
+        this.setRewardSlot(inv, RewardsManager.effectHunger, 9 * 2 + 4);
 
-        this.setRewardSlot(inv, RewardsConfig.rtp2500, 9 * 3 + 3);
-        this.setRewardSlot(inv, RewardsConfig.tpAncientCity, 9 * 3 + 4);
-        this.setRewardSlot(inv, RewardsConfig.breakBlocks, 9 * 3 + 5);
+        this.setRewardSlot(inv, RewardsManager.rtp2500, 9 * 3 + 3);
+        this.setRewardSlot(inv, RewardsManager.tpAncientCity, 9 * 3 + 4);
+        this.setRewardSlot(inv, RewardsManager.breakBlocks, 9 * 3 + 5);
 
-        this.setRewardSlot(inv, RewardsConfig.effectRegen, 9 * 4 + 2);
-        this.setRewardSlot(inv, RewardsConfig.locateVillage, 9 * 4 + 3);
-        this.setRewardSlot(inv, RewardsConfig.randomFood, 9 * 4 + 5);
-        this.setRewardSlot(inv, RewardsConfig.randomStuff, 9 * 4 + 6);
+        this.setRewardSlot(inv, RewardsManager.effectRegen, 9 * 4 + 2);
+        this.setRewardSlot(inv, RewardsManager.locateVillage, 9 * 4 + 3);
+        this.setRewardSlot(inv, RewardsManager.randomFood, 9 * 4 + 5);
+        this.setRewardSlot(inv, RewardsManager.randomStuff, 9 * 4 + 6);
 
         return inv;
     }
 
     private void setRewardSlot(Inventory inv, MCReward reward, int slot){
-        CustomReward twitchReward = RewardsConfig.getTwitchReward(reward);
+        CustomReward twitchReward = RewardsManager.getTwitchReward(reward);
         inv.setItem(slot, new ItemBuilder(reward.getDisplay(), "§e" + reward.getDisplayName())
                 .setLore(twitchReward == null ? "§cPas de récompense twitch associée" : "§d§lTwitch : §f" + twitchReward.getTitle())
                 .build());

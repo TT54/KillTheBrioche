@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.tt54.killTheBrioche.inventories.config.MCRewardsInventory;
 import fr.tt54.killTheBrioche.rewards.MCReward;
-import fr.tt54.killTheBrioche.rewards.RewardsConfig;
+import fr.tt54.killTheBrioche.managers.RewardsManager;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -32,7 +32,7 @@ public class CmdKillTheBrioche {
             ).then(Commands.literal("simulate")
                     .then(Commands.argument("reward", StringArgumentType.word())
                             .suggests((commandContext, suggestionsBuilder) -> {
-                                for(String id : RewardsConfig.getMCRewardIds()){
+                                for(String id : RewardsManager.getMCRewardIds()){
                                     suggestionsBuilder.suggest(id);
                                 }
                                 return suggestionsBuilder.buildFuture();
@@ -40,9 +40,9 @@ public class CmdKillTheBrioche {
                             .executes(ctx -> {
                                 final CommandSender sender = ctx.getSource().getSender();
                                 final String rewardID = ctx.getArgument("reward", String.class);
-                                final MCReward reward = RewardsConfig.getMcReward(rewardID);
+                                final MCReward reward = RewardsManager.getMcReward(rewardID);
                                 if(reward != null){
-                                    RewardsConfig.executeReward(reward);
+                                    RewardsManager.executeReward(reward);
                                 } else {
                                     sender.sendMessage("§cRécompense " + rewardID + " non trouvée");
                                 }
@@ -53,7 +53,7 @@ public class CmdKillTheBrioche {
                     .executes(ctx -> {
                         final CommandSender sender = ctx.getSource().getSender();
                         if(TwitchBridge.instance.isUserConnected()){
-                            RewardsConfig.loadTwitchRewards(TwitchBridge.instance);
+                            RewardsManager.loadTwitchRewards(TwitchBridge.instance);
                         } else {
                             sender.sendMessage("§cAucune chaine twitch connectée");
                         }
