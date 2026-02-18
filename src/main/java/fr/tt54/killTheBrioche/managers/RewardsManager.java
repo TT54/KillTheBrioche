@@ -43,6 +43,8 @@ public class RewardsManager {
     public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF));
     public static final MCReward randomStuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE));
     public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1));
+    public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward());
+    public static final MCReward deathTPReward = registerMCReward(new DeathTPReward());
 
 
     public static void load() {

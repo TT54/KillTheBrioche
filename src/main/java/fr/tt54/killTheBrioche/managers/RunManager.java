@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -103,5 +104,9 @@ public class RunManager {
         } else{
             player.sendMessage(Component.text("Vous n'avez aucun bonus de téléportation à votre dernier point de mort !", NamedTextColor.RED));
         }
+    }
+
+    public static void addCashShield(@NotNull UUID uuid, int amount) {
+        runnerCashShield.put(uuid, getCashShield(uuid) + amount);
     }
 }
