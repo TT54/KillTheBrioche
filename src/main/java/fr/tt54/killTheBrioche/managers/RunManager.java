@@ -53,6 +53,10 @@ public class RunManager {
         return runnerCashPrice.getOrDefault(uuid, INITIAL_CASH_PRICE);
     }
 
+    public static void setPlayerCashPrice(UUID uuid, double cashPrice) {
+        runnerCashPrice.put(uuid, cashPrice);
+    }
+
     public static int getCashShield(UUID uuid) {
         return runnerCashShield.getOrDefault(uuid, 0);
     }

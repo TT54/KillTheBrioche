@@ -1,6 +1,7 @@
 package fr.tt54.killTheBrioche.cmd;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.tt54.killTheBrioche.inventories.config.MCRewardsInventory;
@@ -97,6 +98,25 @@ public class CmdKillTheBrioche {
 
                                         return Command.SINGLE_SUCCESS;
                                     })
+                            )
+                    )
+            ).then(Commands.literal("cash_price")
+                    .then(Commands.literal("set")
+                            .then(Commands.argument("targets", ArgumentTypes.players())
+                                    .then(Commands.argument("price", IntegerArgumentType.integer(0))
+                                            .executes(ctx -> {
+                                                final CommandSender sender = ctx.getSource().getSender();
+                                                final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("targets", PlayerSelectorArgumentResolver.class);
+                                                final int price = ctx.getArgument("price", Integer.class);
+
+                                                for(Player player : targetResolver.resolve(ctx.getSource())){
+                                                    RunManager.setPlayerCashPrice(player.getUniqueId(), price);
+                                                }
+                                                sender.sendMessage(Component.text("Cash Price mis à " + price + " pour : " + targetResolver.resolve(ctx.getSource()).stream().map(Player::getName).toList(), NamedTextColor.GREEN));
+
+                                                return Command.SINGLE_SUCCESS;
+                                            })
+                                    )
                             )
                     )
             )
