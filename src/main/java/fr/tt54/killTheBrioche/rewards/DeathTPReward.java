@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class DeathTPReward extends MCReward{
 
     public DeathTPReward() {
-        super("death_tp", "Téléportation à la dernière mort", "§eGain de la possibilité de se téléporter à sa dernière mort", Material.ENDER_PEARL);
+        super("death_tp", "Bonus de téléportation à la dernière mort", "§eGain de la possibilité de se téléporter à sa dernière mort", Material.ENDER_PEARL);
     }
 
     @Override

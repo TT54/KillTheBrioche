@@ -25,9 +25,9 @@ public class StuffReward extends MCReward{
     @Override
     public void execute(Player target) {
         double proba = random.nextDouble();
-        if(proba < .4){
+        if(proba < .35){
             giveItem(target, NOOB_STUFF);
-        } else if(proba < .7){
+        } else if(proba < .65){
             giveItem(target, LESS_NOOB_STUFF);
         } else if(proba < .9){
             giveItem(target, DIAMOND_STUFF);
