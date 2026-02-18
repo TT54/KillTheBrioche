@@ -45,7 +45,7 @@ public class RewardsManager {
     public static final MCReward effectInstantHeal1 = registerMCReward(new EffectReward(PotionEffectType.INSTANT_HEALTH, 0, 1, Material.GOLDEN_APPLE), "", 160, 0);
     public static final MCReward killMobsAround = registerMCReward(new KillMobsAround(25), "", 250, 60);
     public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1), "", 480, 120);
-    // TODO : Effet de potion random
+    public static final MCReward randomEffet = registerMCReward(new RandomEffectsReward(), "", 550, 300);
     public static final MCReward randomStuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE), "35% : Pierre / Copper \n30% : Fer / Or \n25% : Diamant \n10% : Netherite", 1600, 600);
     public static final MCReward deathTPReward = registerMCReward(new DeathTPReward(), "", 2500, 15 * 60);
     public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward(), "", 2000, 15 * 60);
