@@ -6,6 +6,7 @@ import fr.tt54.killTheBrioche.cmd.CmdKillTheBrioche;
 import fr.tt54.killTheBrioche.cmd.CmdUseDeathTeleportation;
 import fr.tt54.killTheBrioche.listeners.PlayerListener;
 import fr.tt54.killTheBrioche.managers.RewardsManager;
+import fr.tt54.killTheBrioche.runnables.GameRunnable;
 import fr.tt54.killTheBrioche.scoreboard.GameScoreboard;
 import fr.tt54.killTheBrioche.scoreboard.ScoreboardManager;
 import fr.tt54.killTheBrioche.twitch.OAuthCallbackServer;
@@ -67,6 +68,8 @@ public final class KillTheBrioche extends JavaPlugin {
                 }).start();
             }
         }.runTaskTimer(this, 20 * 60 * 10, 20 * 60 * 10);
+
+        new GameRunnable().runTaskTimer(this, 0, 20);
 
         enableHealthInfo();
     }

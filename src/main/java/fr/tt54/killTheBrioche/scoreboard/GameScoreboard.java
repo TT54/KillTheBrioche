@@ -31,8 +31,13 @@ public class GameScoreboard extends ImpyriaScoreboard {
     }
 
     private void drawScoreboard(FastBoard fastBoard, Player player){
+        int timeLeft = RunManager.GAME_DURATION_SECONDS - RunManager.getTime();
+        int minutes = timeLeft / 60;
+        int seconds = timeLeft % 60;
+
         int i = 0;
         fastBoard.updateTitle("§6§lKill The Brioche");
+        fastBoard.updateLine(i++, "§7Temps restant : §e" + format.format(minutes) + ":" + format.format(seconds));
         fastBoard.updateLine(i++, "§7");
 
         for(UUID runnerUUID : RunManager.getRunners()){
@@ -42,7 +47,7 @@ public class GameScoreboard extends ImpyriaScoreboard {
                 String secondLineBuilder = " ".repeat(runner.getName().length()) +
                         "§7" +
                         format.format(RunManager.getCashShield(runnerUUID)) +
-                        "\uD83D\uDEE1\uFE0F | §1" +
+                        "\uD83D\uDEE1 | §b" +
                         format.format(RunManager.getCashShield(runnerUUID)) +
                         "TP";
                 fastBoard.updateLine(i++, secondLineBuilder);

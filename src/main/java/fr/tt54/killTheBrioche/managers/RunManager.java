@@ -16,8 +16,10 @@ public class RunManager {
     private static final Map<UUID, Integer> runnerDeathTeleportationBonus = new HashMap<>();
 
     public static final double INITIAL_CASH_PRICE = 100.0;
+    public static final int GAME_DURATION_SECONDS = 60 * 60 * 2;
 
     private static boolean started = false;
+    private static int time;
 
     public static Set<UUID> getRunners() {
         return runners;
@@ -108,5 +110,13 @@ public class RunManager {
 
     public static void addCashShield(@NotNull UUID uuid, int amount) {
         runnerCashShield.put(uuid, getCashShield(uuid) + amount);
+    }
+
+    public static void increaseTime() {
+        time++;
+    }
+
+    public static int getTime() {
+        return time;
     }
 }
