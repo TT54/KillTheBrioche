@@ -2,6 +2,7 @@ package fr.tt54.killTheBrioche.managers;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -145,8 +146,16 @@ public class RunManager {
         Bukkit.broadcast(Component.text("La partie est terminée !", NamedTextColor.GREEN));
         if(winner != null) {
             Bukkit.broadcast(Component.text("Victoire de " + winner.getName() + " avec un cash de " + getCashPrice(winner.getUniqueId()) + "€ !", NamedTextColor.GOLD));
+            for(Player player : Bukkit.getOnlinePlayers()){
+                Title title = Title.title(Component.text("Victoire de " + winner.getName() + " !", NamedTextColor.GOLD), Component.text("Cash final : " + getCashPrice(winner.getUniqueId()) + "€", NamedTextColor.YELLOW));
+                player.showTitle(title);
+            }
         } else {
             Bukkit.broadcast(Component.text("Défaite des runners !", NamedTextColor.RED));
+            for(Player player : Bukkit.getOnlinePlayers()){
+                Title title = Title.title(Component.text("Défaite !", NamedTextColor.RED), Component.text("Les runners ont perdu !", NamedTextColor.GRAY));
+                player.showTitle(title);
+            }
         }
         for(UUID runnerUUID : runners){
             Player player = Bukkit.getPlayer(runnerUUID);
