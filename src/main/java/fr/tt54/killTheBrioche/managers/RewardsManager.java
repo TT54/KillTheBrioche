@@ -30,25 +30,25 @@ public class RewardsManager {
 
     private static final Type rewardsLinkType = new TypeToken<@NotNull Map<String, String>>() {}.getType();
 
-    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5, 1), "", 40, 60);
-    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5, 1), "", 70, 60);
-    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5, 1), "", 180, 60);
-    public static final MCReward spawnWitch = registerMCReward(new SpawnMobReward(EntityType.WITCH, 5, 1), "", 250, 60);
-    public static final MCReward spawnVex = registerMCReward(new SpawnMobReward(EntityType.VEX, 5, 1), "", 750, 300);
-    public static final MCReward spawn5Zombies = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 10, 5), "", 280, 300);
-    public static final MCReward spawn5Skeletons = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 10, 5), "", 540, 300);
-    public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE), "", 2500, 300);
-    public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL), "", 5000, 15 * 60);
-    public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER), "", 10000, 30 * 60);
+    public static final MCReward spawnZombie = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 5, 1), "Zombie x1", "Fait apparaître 1 zombie dans un rayon de 5 blocs", 40, 60, "#FF0000");
+    public static final MCReward spawnSkeleton = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 5, 1), "Squelette x1", "Fait apparaître 1 squelette dans un rayon de 5 blocs", 70, 60, "#FF0000");
+    public static final MCReward spawnCreeper = registerMCReward(new SpawnMobReward(EntityType.CREEPER, 5, 1), "Creeper x1", "Fait apparaître 1 creeper dans un rayon de 5 blocs", 180, 60, "#FF0000");
+    public static final MCReward spawnWitch = registerMCReward(new SpawnMobReward(EntityType.WITCH, 5, 1), "Sorcière x1", "Fait apparaître 1 Luna, euh sorcière pardon, dans un rayon de 5 blocs", 250, 60, "#FF0000");
+    public static final MCReward spawnVex = registerMCReward(new SpawnMobReward(EntityType.VEX, 5, 1), "Vex x1", "Fait apparaître 1 vex dans un rayon de 5 blocs", 750, 300, "#FF0000");
+    public static final MCReward spawn5Zombies = registerMCReward(new SpawnMobReward(EntityType.ZOMBIE, 10, 5), "Zombie x5", "Fait apparaître 5 zombies dans un rayon de 5 blocs", 280, 300, "#FF0000");
+    public static final MCReward spawn5Skeletons = registerMCReward(new SpawnMobReward(EntityType.SKELETON, 10, 5), "Squelette x5", "Fait apparaître 5 squelettes dans un rayon de 5 blocs", 540, 300, "#FF0000");
+    public static final MCReward breakBlocks = registerMCReward(new BreakBlocksReward(10, 5, Material.DIAMOND_PICKAXE), "Crack, plus de blocs", "Casse 10 blocs dans un rayon de 5 blocs", 2500, 300, "#FF0000");
+    public static final MCReward rtp2500 = registerMCReward(new RandomTeleportReward(2500, Material.ENDER_PEARL), "Dégage !", "Téléporte aléatoirement le joueur dans l'overworld", 5000, 15 * 60, "#FF0000");
+    public static final MCReward tpAncientCity = registerMCReward(new AncientCityTeleportationReward(Material.SCULK_SHRIEKER), "Silence !", "Téléporte le joueur dans une ancienne cité", 10000, 30 * 60, "#FF0000");
 
-    public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF), "", 80, 0);
-    public static final MCReward effectInstantHeal1 = registerMCReward(new EffectReward(PotionEffectType.INSTANT_HEALTH, 0, 1, Material.GOLDEN_APPLE), "", 160, 0);
-    public static final MCReward killMobsAround = registerMCReward(new KillMobsAround(25), "", 250, 60);
-    public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1), "", 480, 120);
-    public static final MCReward randomEffet = registerMCReward(new RandomEffectsReward(), "", 550, 300);
-    public static final MCReward randomStuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE), "35% : Pierre / Copper \n30% : Fer / Or \n25% : Diamant \n10% : Netherite", 1600, 600);
-    public static final MCReward deathTPReward = registerMCReward(new DeathTPReward(), "", 2500, 15 * 60);
-    public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward(), "", 2000, 15 * 60);
+    public static final MCReward randomFood = registerMCReward(new FoodReward(Material.COOKED_BEEF), "Miam", "Donne de un item de nourriture aléatorie", 80, 0, "#00FF00");
+    public static final MCReward effectInstantHeal1 = registerMCReward(new EffectReward(PotionEffectType.INSTANT_HEALTH, 0, 1, Material.GOLDEN_APPLE), "Soin", "Soigne quelques coeurs", 160, 0, "#00FF00");
+    public static final MCReward killMobsAround = registerMCReward(new KillMobsAround(25), "Moins de mobs", "Tue les monstres dans un rayon de 25 blocs", 1250, 60 * 10, "#00FF00");
+    public static final MCReward spawnIronGolem = registerMCReward(new SpawnMobReward(EntityType.IRON_GOLEM, 1, 1), "Golem x1", "Fait apparaître un golem de fer", 480, 120, "#00FF00");
+    public static final MCReward randomEffet = registerMCReward(new RandomEffectsReward(), "Splash", "Donne un effet de potion (positif) aléatoire", 550, 300, "#00FF00");
+    public static final MCReward randomStuff = registerMCReward(new StuffReward(Material.DIAMOND_CHESTPLATE), "Armure !", "Donne une pièce d'armure en suivant ces stats : 35% : Pierre / Copper \n30% : Fer / Or \n25% : Diamant \n10% : Netherite", 1600, 600, "#00FF00");
+    public static final MCReward deathTPReward = registerMCReward(new DeathTPReward(), "/back", "Donne la possibilité au participant de se téléporter à l'endroit de sa dernière mort", 2500, 15 * 60, "#00FF00");
+    public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward(), "Bouclier CASH", "Donne un bouclier permettant de ne pas diviser le cashprice à la mort", 2000, 15 * 60, "#00FF00");
 
 
     public static void load() {
@@ -89,7 +89,7 @@ public class RewardsManager {
             // Sinon la reward MC n'est pas liée à une reward Twitch, on en crée une nouvelle et on la lie
 
             KillTheBrioche.logger.info("La reward MC " + mcRewardId + " n'est pas liée à une reward Twitch, création d'une reward Twitch associée...");
-            CustomRewardList result = bridge.createCustomReward(mcReward.getDisplayName(), attributes.description(), attributes.cost(), attributes.cooldown());
+            CustomRewardList result = bridge.createCustomReward(attributes.title(), attributes.description(), attributes.cost(), attributes.cooldown(), attributes.color());
             if(!result.getRewards().isEmpty()) {
                 CustomReward twitchReward = result.getRewards().getFirst();
                 twitchRewardsId.put(twitchReward.getId(), twitchReward);
@@ -130,9 +130,9 @@ public class RewardsManager {
         });
     }
 
-    private static MCReward registerMCReward(MCReward reward, String description, int cost, int cooldown){
+    private static MCReward registerMCReward(MCReward reward, String title, String description, int cost, int cooldown, String color){
         mcRewards.put(reward.getId(), reward);
-        rewardAttributes.put(reward.getId(), new TwitchRewardAttributes(description, cost, cooldown));
+        rewardAttributes.put(reward.getId(), new TwitchRewardAttributes(title, description, cost, cooldown, color));
         return reward;
     }
 
@@ -169,7 +169,7 @@ public class RewardsManager {
         }
     }
 
-    private record TwitchRewardAttributes(String description, int cost, int cooldown){
+    private record TwitchRewardAttributes(String title, String description, int cost, int cooldown, String color){
 
     }
 }

@@ -275,7 +275,7 @@ public class TwitchBridge {
         return new ArrayList<>();
     }
 
-    public CustomRewardList createCustomReward(String title, String description, int cost, int cooldownInSeconds){
+    public CustomRewardList createCustomReward(String title, String description, int cost, int cooldownInSeconds, String backgroundColor){
         if(this.currentUser == null) return null;
         CustomReward reward = CustomReward.builder()
                 .title(title)
@@ -285,6 +285,7 @@ public class TwitchBridge {
                         .isEnabled(cooldownInSeconds > 0)
                         .build()
                 )
+                .backgroundColor(backgroundColor)
                 .cost(cost)
                 .build();
         return this.twitchClient.getHelix().createCustomReward(this.token.access_token(), this.currentUser.getId(), reward).execute();
