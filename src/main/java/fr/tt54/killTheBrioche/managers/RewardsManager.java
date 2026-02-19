@@ -50,6 +50,7 @@ public class RewardsManager {
     public static final MCReward deathTPReward = registerMCReward(new DeathTPReward(), "/back", "Donne la possibilité au participant de se téléporter à l'endroit de sa dernière mort", 2500, 15 * 60, "#00FF00");
     public static final MCReward cashShieldReward = registerMCReward(new CashShieldReward(), "Bouclier CASH", "Donne un bouclier permettant de ne pas diviser le cashprice à la mort", 2000, 15 * 60, "#00FF00");
 
+    private static boolean alreadyLoading = false;
 
     public static void load() {
         rewardsLink.clear();
@@ -79,24 +80,45 @@ public class RewardsManager {
             MCReward mcReward = mcRewardEntry.getValue();
             TwitchRewardAttributes attributes = rewardAttributes.get(mcRewardId);
 
+            System.out.println("Vérification de la reward MC " + mcRewardId + " : " + attributes.title());
+            System.out.println(Arrays.toString(rewardsLink.values().toArray()));
+            System.out.println(rewardsLink.containsValue(mcRewardId));
             if (rewardsLink.containsValue(mcRewardId)) {
+                System.out.println("La reward MC " + mcRewardId + " est déjà liée à une reward Twitch, vérification de son existence...");
                 String twitchRewardId = rewardsLink.entrySet().stream().filter(entry -> entry.getValue().equalsIgnoreCase(mcRewardId)).map(Map.Entry::getKey).findFirst().orElse(null);
                 if(twitchRewardId != null && twitchRewardsId.containsKey(twitchRewardId)){
+                    System.out.println("La reward Twitch liée à " + mcRewardId + " existe, tout est bon !");
                     continue; // La reward Twitch liée à cette reward MC existe déjà, on passe à la suivante
                 }
+                rewardsLink.remove(twitchRewardId);
             }
 
             // Sinon la reward MC n'est pas liée à une reward Twitch, on en crée une nouvelle et on la lie
 
             KillTheBrioche.logger.info("La reward MC " + mcRewardId + " n'est pas liée à une reward Twitch, création d'une reward Twitch associée...");
-            CustomRewardList result = bridge.createCustomReward(attributes.title(), attributes.description(), attributes.cost(), attributes.cooldown(), attributes.color());
-            if(!result.getRewards().isEmpty()) {
-                CustomReward twitchReward = result.getRewards().getFirst();
-                twitchRewardsId.put(twitchReward.getId(), twitchReward);
-                rewardsLink.put(twitchReward.getId(), mcRewardId);
-                KillTheBrioche.logger.info("Reward Twitch créée et liée à " + mcRewardId);
-            } else {
-                KillTheBrioche.logger.severe("Erreur lors de la création de la reward Twitch pour " + mcRewardId);
+            try {
+                CustomRewardList result = bridge.createCustomReward(attributes.title(), attributes.description(), attributes.cost(), attributes.cooldown(), attributes.color());
+                if (!result.getRewards().isEmpty()) {
+                    CustomReward twitchReward = result.getRewards().getFirst();
+                    twitchRewardsId.put(twitchReward.getId(), twitchReward);
+                    rewardsLink.put(twitchReward.getId(), mcRewardId);
+                    KillTheBrioche.logger.info("Reward Twitch créée et liée à " + mcRewardId);
+                } else {
+                    KillTheBrioche.logger.severe("Erreur lors de la création de la reward Twitch pour " + mcRewardId);
+                }
+            } catch (Exception e) {
+                List<CustomReward> rewards = bridge.getCustomRewards(true);
+                for(CustomReward reward : rewards){
+                    bridge.deleteCustomReward(reward.getId());
+                }
+                twitchRewardsId.clear();
+                rewardsLink.clear();
+                if(!alreadyLoading){
+                    alreadyLoading = true;
+                    loadTwitchRewards(bridge);
+                }
+                alreadyLoading = false;
+                return;
             }
         }
 

@@ -38,13 +38,13 @@ public final class KillTheBrioche extends JavaPlugin {
         logger = this.getLogger();
 
         this.saveDefaultConfig();
+        RewardsManager.load();
 
         TwitchBridge.instance = new TwitchBridge(this.getConfig().getString("client_id", "client_id"), this.getConfig().getString("client_secret", "client_secret"));
         TwitchBridge.instance.onConnection(RewardsManager::loadTwitchRewards).onRewardRedemption(RewardsManager::onTwitchRewardRedeemed).onSub(RewardsManager::onTwitchSub);
         OAuthCallbackServer.launchServer();
         TwitchBridge.instance.loadTwitchToken();
 
-        RewardsManager.load();
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(CmdKillTheBrioche.ktbCommand, List.of("killthebrioche", "ktb"));
