@@ -8,6 +8,7 @@ import fr.tt54.killTheBrioche.inventories.config.MCRewardsInventory;
 import fr.tt54.killTheBrioche.managers.RunManager;
 import fr.tt54.killTheBrioche.rewards.MCReward;
 import fr.tt54.killTheBrioche.managers.RewardsManager;
+import fr.tt54.killTheBrioche.rewards.SubReward;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -50,6 +51,14 @@ public class CmdKillTheBrioche {
                                 } else {
                                     sender.sendMessage("§cRécompense " + rewardID + " non trouvée");
                                 }
+                                return Command.SINGLE_SUCCESS;
+                            })
+                    )
+                    .then(Commands.literal("sub_reward")
+                            .executes(ctx -> {
+                                final CommandSender sender = ctx.getSource().getSender();
+                                RewardsManager.executeReward(SubReward.subReward);
+                                sender.sendMessage("§aSub Reward exécutée");
                                 return Command.SINGLE_SUCCESS;
                             })
                     )
