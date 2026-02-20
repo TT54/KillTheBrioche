@@ -172,12 +172,16 @@ public class TwitchBridge {
         for (EventSubSubscription sub : subs.getSubscriptions()) {
             System.out.println("Suppression: " + sub.getId());
 
-            twitchClient.getHelix()
-                    .deleteEventSubSubscription(
-                            appToken.getAccessToken(),
-                            sub.getId()
-                    )
-                    .execute();
+            try {
+                twitchClient.getHelix()
+                        .deleteEventSubSubscription(
+                                appToken.getAccessToken(),
+                                sub.getId()
+                        )
+                        .execute();
+            } catch (Exception e) {
+                KillTheBrioche.logger.log(Level.SEVERE, "Impossible de supprimer la subscription " + sub.getId(), e);
+            }
         }
 
         System.out.println("✅ Toutes les subscriptions ont été supprimées.");
@@ -190,12 +194,16 @@ public class TwitchBridge {
         for (Conduit conduit : conduits.getConduits()) {
             System.out.println("Suppression conduit: " + conduit.getId());
 
-            twitchClient.getHelix()
-                    .deleteConduit(
-                            appToken.getAccessToken(),
-                            conduit.getId()
-                    )
-                    .execute();
+            try {
+                twitchClient.getHelix()
+                        .deleteConduit(
+                                appToken.getAccessToken(),
+                                conduit.getId()
+                        )
+                        .execute();
+            } catch (Exception e){
+                KillTheBrioche.logger.log(Level.SEVERE, "Impossible de supprimer le conduit " + conduit.getId(), e);
+            }
         }
     }
 
@@ -212,9 +220,14 @@ public class TwitchBridge {
         this.deleteSubscriptions();
 
         try {
-            if(conduit != null) {
-                conduit.close();
+            try {
+                if(conduit != null) {
+                    conduit.close();
+                }
+            } catch (Exception e){
+                KillTheBrioche.logger.log(Level.WARNING, "Impossible de fermer le conduit Twitch existant (il est peut-être déjà fermé)", e);
             }
+
             conduit = TwitchConduitSocketPool.create(spec -> {
                 spec.clientId(this.clientId);
                 spec.clientSecret(this.clientSecret);
