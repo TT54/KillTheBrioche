@@ -8,12 +8,14 @@ import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -39,6 +41,13 @@ public class PlayerListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event){
         RunManager.handleDeath(event.getEntity());
         SubReward.subReward.handleDeath(event);
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event){
+        if(event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST){
+            SubReward.subReward.handleChestInteract(event.getPlayer(), event.getClickedBlock().getLocation());
+        }
     }
 
     @EventHandler

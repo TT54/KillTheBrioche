@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,9 +29,31 @@ public class SubReward extends MCReward{
     private final Map<UUID, Integer> subWave = new HashMap<>();
     private final Map<UUID, List<Entity>> spawnedEntities = new HashMap<>();
     private final Map<UUID, Location> spawnLocations = new HashMap<>();
+    private final Map<UUID, List<Location>> chestLocations = new HashMap<>();
 
     public SubReward() {
         super("sub_reward", "Nouveau Sub !", "Quelque chose semble se préparer...", Material.WITHER_SKELETON_SKULL);
+    }
+
+    public void handleChestInteract(Player player, Location location){
+        if(!chestLocations.containsKey(player.getUniqueId())) return;
+        UUID uuid = player.getUniqueId();
+        List<Location> playerChestLocations = chestLocations.get(uuid);
+        System.out.println(playerChestLocations.size());
+        boolean found = false;
+        for(Location chestLocation : playerChestLocations){
+            if(chestLocation.getWorld() == location.getWorld() && chestLocation.distance(location) < 1){
+                found = true;
+                break;
+            }
+        }
+        if(!found) return;
+        chestLocations.get(uuid).clear();
+        final int currentSubCount = subCounts.getOrDefault(uuid, 0);
+        subCounts.put(uuid, currentSubCount + 1);
+        if(currentSubCount == 0) {
+            startReward(uuid, player.getLocation().clone());
+        }
     }
 
     public void handleDeath(PlayerDeathEvent event) {
@@ -66,6 +89,8 @@ public class SubReward extends MCReward{
                 rightData.setType(Chest.Type.RIGHT);
                 rightData.setFacing(BlockFace.NORTH); // Doit être la même que la partie gauche
                 rightLocation.getBlock().setBlockData(rightData);
+
+                this.chestLocations.computeIfAbsent(uuid, k -> new ArrayList<>()).addAll(List.of(leftLocation, rightLocation));
 
                 for(ItemStack is : event.getDrops()){
                     ((org.bukkit.block.Chest) leftLocation.getBlock().getState()).getInventory().addItem(is);
