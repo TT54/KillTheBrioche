@@ -44,7 +44,7 @@ public class GameScoreboard extends ImpyriaScoreboard {
             OfflinePlayer runner = Bukkit.getOfflinePlayer(runnerUUID);
             if(runner.getName() != null) {
                 fastBoard.updateLine(i++, "§e" + runner.getName() + " : §f" + formatDouble.format(RunManager.getCashPrice(runnerUUID)) + "€");
-                fastBoard.updateLine(i++, "§7" + RunManager.getCashShield(runnerUUID) + " \uD83D\uDEE1 §8| §b" + RunManager.getDeathTeleportationBonus(runnerUUID) + " TP");
+                fastBoard.updateLine(i++, "§7" + RunManager.getCashShield(runnerUUID) + " \uD83D\uDEE1 §8| §b" + RunManager.getDeathTeleportationBonus(runnerUUID) + " Death TP");
                 fastBoard.updateLine(i++, "§" + (i / 3 - 1));
             }
         }
