@@ -1,12 +1,16 @@
 package fr.tt54.killTheBrioche.rewards;
 
 import fr.tt54.killTheBrioche.KillTheBrioche;
+import fr.tt54.killTheBrioche.managers.RunManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -29,6 +33,48 @@ public class SubReward extends MCReward{
         super("sub_reward", "Nouveau Sub !", "Quelque chose semble se préparer...", Material.WITHER_SKELETON_SKULL);
     }
 
+    public void handleDeath(PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+        final UUID uuid = player.getUniqueId();
+        if(subCounts.getOrDefault(uuid, 0) > 0){
+            final int currentSubCount = subCounts.get(uuid);
+            subCounts.put(uuid, 0);
+            subWave.put(uuid, 0);
+
+            if(currentSubCount > 1) {
+                player.sendMessage(Component.text("A cause des subs, cette mort compte pour " + currentSubCount + " morts !", NamedTextColor.YELLOW));
+            }
+            for(int i = 0; i < currentSubCount - 1; i++){
+                RunManager.handleDeath(player);
+            }
+
+            Location chestLocation = spawnLocations.get(uuid);
+            if(chestLocation != null){
+                Location leftLocation = chestLocation.clone().add(0, 1, 0);
+                Location rightLocation = chestLocation.clone().add(1, 1, 0);
+                leftLocation.getBlock().setType(Material.CHEST);
+                rightLocation.getBlock().setType(Material.CHEST);
+
+                // 3. Configurer la partie GAUCHE
+                Chest leftData = (Chest) leftLocation.getBlock().getBlockData();
+                leftData.setType(Chest.Type.LEFT);
+                leftData.setFacing(BlockFace.NORTH); // Définit l'orientation
+                leftLocation.getBlock().setBlockData(leftData);
+
+                // 4. Configurer la partie DROITE
+                Chest rightData = (Chest) rightLocation.getBlock().getBlockData();
+                rightData.setType(Chest.Type.RIGHT);
+                rightData.setFacing(BlockFace.NORTH); // Doit être la même que la partie gauche
+                rightLocation.getBlock().setBlockData(rightData);
+
+                for(ItemStack is : event.getDrops()){
+                    ((org.bukkit.block.Chest) leftLocation.getBlock().getState()).getInventory().addItem(is);
+                }
+            }
+            event.getDrops().clear();
+        }
+    }
+
     @Override
     public void execute(Player target) {
         final UUID uuid = target.getUniqueId();
@@ -42,10 +88,10 @@ public class SubReward extends MCReward{
     }
 
     public void startReward(UUID playerUUID, Location startLocation){
-        launchWave(playerUUID, 1);
         subWave.put(playerUUID, 1);
         spawnLocations.put(playerUUID, startLocation);
         spawnedEntities.put(playerUUID, new ArrayList<>());
+        launchWave(playerUUID, 1);
 
         BukkitRunnable runnable = new BukkitRunnable() {
 
@@ -59,6 +105,7 @@ public class SubReward extends MCReward{
                     for(Entity entity : spawnedEntities.get(playerUUID)){
                         entity.remove();
                     }
+                    spawnedEntities.remove(playerUUID);
                     return;
                 }
 

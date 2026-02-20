@@ -2,6 +2,7 @@ package fr.tt54.killTheBrioche.listeners;
 
 import fr.tt54.killTheBrioche.KillTheBrioche;
 import fr.tt54.killTheBrioche.managers.RunManager;
+import fr.tt54.killTheBrioche.rewards.SubReward;
 import fr.tt54.killTheBrioche.scoreboard.ScoreboardManager;
 import fr.tt54.killTheBrioche.twitch.TwitchBridge;
 import net.kyori.adventure.text.Component;
@@ -37,6 +38,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
         RunManager.handleDeath(event.getEntity());
+        SubReward.subReward.handleDeath(event);
     }
 
     @EventHandler
