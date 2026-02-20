@@ -21,6 +21,7 @@ public class RunManager {
     public static final int GAME_DURATION_SECONDS = 60 * 60 * 2;
 
     private static boolean started = false;
+    private static boolean paused = false;
     private static int time;
 
     public static Set<UUID> getRunners() {
@@ -120,6 +121,20 @@ public class RunManager {
 
     public static int getTime() {
         return time;
+    }
+
+    public static void pauseRun(){
+        paused = true;
+        Bukkit.broadcast(Component.text("La partie est en pause !", NamedTextColor.YELLOW));
+    }
+
+    public static void resumeRun(){
+        paused = false;
+        Bukkit.broadcast(Component.text("La partie reprend !", NamedTextColor.GREEN));
+    }
+
+    public static boolean isPaused() {
+        return paused;
     }
 
     public static void startRun() {

@@ -8,7 +8,7 @@ public class GameRunnable extends BukkitRunnable {
     @Override
     public void run() {
         KillTheBrioche.gameScoreboard.updatePlayersScoreboard();
-        if(RunManager.isStarted()){
+        if(RunManager.isStarted() && !RunManager.isPaused()){
             if(RunManager.getTime() >= RunManager.GAME_DURATION_SECONDS){
                 RunManager.stopGame(null);
             } else {

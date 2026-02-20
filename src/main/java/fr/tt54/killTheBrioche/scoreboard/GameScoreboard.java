@@ -38,6 +38,9 @@ public class GameScoreboard extends ImpyriaScoreboard {
         int i = 0;
         fastBoard.updateTitle("§6§lKill The Brioche");
         fastBoard.updateLine(i++, "§7Temps restant : " + (minutes < 10 ? "§c" : "§e") + format.format(minutes) + ":" + format.format(seconds));
+        if(RunManager.isPaused()){
+            fastBoard.updateLine(i++, "§c§lPAUSE");
+        }
         fastBoard.updateLine(i++, "§a");
 
         for(UUID runnerUUID : RunManager.getRunners()){

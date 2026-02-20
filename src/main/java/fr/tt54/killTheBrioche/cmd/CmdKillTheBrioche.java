@@ -139,6 +139,36 @@ public class CmdKillTheBrioche {
                         }
                         return Command.SINGLE_SUCCESS;
                     })
+            ).then(Commands.literal("pause")
+                    .executes(ctx -> {
+                        final CommandSender sender = ctx.getSource().getSender();
+                        if(RunManager.isStarted()){
+                            if(RunManager.isPaused()){
+                                sender.sendMessage(Component.text("§cLa partie est déjà en pause", NamedTextColor.RED));
+                            } else {
+                                RunManager.pauseRun();
+                                sender.sendMessage(Component.text("Partie mise en pause", NamedTextColor.YELLOW));
+                            }
+                        } else {
+                            sender.sendMessage(Component.text("§cAucune partie en cours", NamedTextColor.RED));
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
+            ).then(Commands.literal("resume")
+                    .executes(ctx -> {
+                        final CommandSender sender = ctx.getSource().getSender();
+                        if(RunManager.isStarted()){
+                            if(!RunManager.isPaused()){
+                                sender.sendMessage(Component.text("§cLa partie n'est pas en pause", NamedTextColor.RED));
+                            } else {
+                                RunManager.resumeRun();
+                                sender.sendMessage(Component.text("Partie reprise", NamedTextColor.GREEN));
+                            }
+                        } else {
+                            sender.sendMessage(Component.text("§cAucune partie en cours", NamedTextColor.RED));
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })
             )
             .build();
 
