@@ -2,8 +2,10 @@ package fr.tt54.killTheBrioche.rewards;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vex;
 
 public class SpawnMobReward extends MCReward {
 
@@ -23,20 +25,27 @@ public class SpawnMobReward extends MCReward {
     @Override
     public void execute(Player target) {
         for(int k = 0; k < amount; k++) {
-            for (int i = 0; i < MAX_TRIES; i++) {
-                int dx = random.nextInt(2 * radius + 1) - radius;
-                int dz = random.nextInt(2 * radius + 1) - radius;
-
-                Location location = target.getLocation().clone().add(dx, -radius, dz);
-                for (int j = -radius; j < radius + 1; j++) {
-                    if (location.getBlock().isSolid() && !location.clone().add(0, 1, 0).getBlock().isSolid()) {
-                        location.getWorld().spawnEntity(location.add(0, 1, 0), this.type);
-                        return;
-                    }
-                    location.add(0, 1, 0);
-                }
-            }
-            target.getWorld().spawnEntity(target.getLocation(), this.type);
+            spawnMob(target);
         }
+    }
+
+    private void spawnMob(Player target){
+        for (int i = 0; i < MAX_TRIES; i++) {
+            int dx = random.nextInt(2 * radius + 1) - radius;
+            int dz = random.nextInt(2 * radius + 1) - radius;
+
+            Location location = target.getLocation().clone().add(dx, -radius, dz);
+            for (int j = -radius; j < radius + 1; j++) {
+                if (location.getBlock().isSolid() && !location.clone().add(0, 1, 0).getBlock().isSolid()) {
+                    Entity entity = location.getWorld().spawnEntity(location.add(0, 1, 0), this.type);
+                    if(entity instanceof Vex vex){
+                        vex.setTarget(target);
+                    }
+                    return;
+                }
+                location.add(0, 1, 0);
+            }
+        }
+        target.getWorld().spawnEntity(target.getLocation(), this.type);
     }
 }
